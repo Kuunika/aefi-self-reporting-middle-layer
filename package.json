@@ -1,10 +1,10 @@
 {
   "name": "aefi-self-reporting-middle-layer",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Adverse Effects Following Immunisation Self Reporting API Middle Layer for AEFI WhatApp Chatbot",
+  "author": "Digital Health Division",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
