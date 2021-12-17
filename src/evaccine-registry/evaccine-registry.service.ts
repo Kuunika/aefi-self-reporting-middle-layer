@@ -15,6 +15,7 @@ export class EvaccineRegistryService {
 			if (request.trackedEntityInstances.length) {
 				const firstName = request.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'First Name').value;
 				const lastName = request.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'Last Name').value;
+
 				const epiNumber = request.trackedEntityInstances[0].attributes.find(
 					(attribute) => attribute.displayName === 'Unique System Identifier (EPI)',
 				).value;
@@ -22,12 +23,17 @@ export class EvaccineRegistryService {
 					epiNumber,
 					firstName,
 					lastName,
+					dateOfSecondDosage: new Date(),
 				};
 			}
 			return null;
 		} catch (error) {
 			throw new ServerUnavailableException();
 		}
+	}
+
+	getSecondVaccineDate(){
+
 	}
 
 	async findTrackedEntityInstanceByEpiNumber(epiNumber: string): Promise<TrackedEntityInstanceFoundDto> {
@@ -41,6 +47,7 @@ export class EvaccineRegistryService {
 					epiNumber,
 					firstName,
 					lastName,
+					dateOfSecondDosage: new Date(),
 				};
 			}
 			return null;

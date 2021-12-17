@@ -1,10 +1,9 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
-import { PatientSideEffectRecordDto } from 'src/common/dtos/patientSideEffectRecord.dto';
-import { ServerUnavailableException } from 'src/common/exceptions/serverUnavailable.exception';
-import { TrackedEntityInstanceNotFoundException } from 'src/common/exceptions/trackedEntityInstanceNotFound.exception';
-import { ValidatePhoneNumberPipe } from 'src/common/pipes/phoneNumber/validate-phone-number.pipe';
-import { ValidatePatientSideEffectRecordPipe } from 'src/common/pipes/valiidatePatientSideEffectRecord/validate-patient-side-effect-record.pipe';
+import { PatientSideEffectRecordDto } from '../common/dtos/patientSideEffectRecord.dto';
+import { TrackedEntityInstanceNotFoundException } from '../common/exceptions/trackedEntityInstanceNotFound.exception';
+import { ValidatePhoneNumberPipe } from '../common/pipes/phoneNumber/validate-phone-number.pipe';
+import { ValidatePatientSideEffectRecordPipe } from '../common/pipes/valiidatePatientSideEffectRecord/validate-patient-side-effect-record.pipe';
 import { EvaccineRegistryService } from './evaccine-registry.service';
 
 @Controller('e-vaccine-registries')
