@@ -9,7 +9,9 @@ describe('EvaccineRegistryController', () => {
       controllers: [EvaccineRegistryController],
     }).compile();
 
-    controller = module.get<EvaccineRegistryController>(EvaccineRegistryController);
+    controller = module.get<EvaccineRegistryController>(
+      EvaccineRegistryController,
+    );
   });
 
   it('should be defined', () => {

@@ -1,11 +1,13 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { PatientModule } from './patient/patient.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EvaccineRegistryModule } from './evaccine-registry/evaccine-registry.module';
 import { VaccinePreregistrationModule } from './vaccine-preregistration/vaccine-preregistration.module';
+import { OhspModule } from './ohsp/ohsp.module';
 
 @Module({
-  imports: [PatientModule, EvaccineRegistryModule, VaccinePreregistrationModule],
-  controllers: [],
-  providers: [],
+	imports: [ConfigModule.forRoot({ isGlobal: true }), EvaccineRegistryModule, VaccinePreregistrationModule],
+	controllers: [],
+	providers: [],
 })
 export class AppModule {}
