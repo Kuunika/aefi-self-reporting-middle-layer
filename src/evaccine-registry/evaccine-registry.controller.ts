@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
 import { PatientSideEffectRecordDto } from '../common/dtos/patientSideEffectRecord.dto';
-import { TrackedEntityInstanceNotFoundException } from '../common/exceptions/trackedEntityInstanceNotFound.exception';
+import { TrackedEntityInstanceNotFoundException } from '../common/exceptions';
 import { ValidatePhoneNumberPipe } from '../common/pipes/phoneNumber/validate-phone-number.pipe';
 import { ValidatePatientSideEffectRecordPipe } from '../common/pipes/valiidatePatientSideEffectRecord/validate-patient-side-effect-record.pipe';
 import { EvaccineRegistryService } from './evaccine-registry.service';
