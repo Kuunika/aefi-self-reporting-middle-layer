@@ -19,6 +19,7 @@ will need to be set before the application can be run.
 ## Installation and Execution
 ```bash
 npm install --only=prod
+npm run build
 npm run start:prod
 ```
 
