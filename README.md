@@ -3,8 +3,8 @@ The following api document details....
 
 # Deployment
 ## Requirements
-npm version:
-node version:
+npm version: 7.24.2
+node version: v16.11.1
 
 ## Environment Variables
 Copy the contents of .sample.env to an new .env file. the variables:
