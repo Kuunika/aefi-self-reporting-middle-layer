@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { AefiPreregistrationDto } from '../common/dtos/aefi-preregistry.dto';
 
-@Controller('vaccine-preregistration')
-export class VaccinePreregistrationController {}
+@Controller('vaccine-preregistrations')
+export class VaccinePreregistrationController {
+	@Post()
+	createAefiVaccinePreregistration(@Body() payload: AefiPreregistrationDto) {
+		return {
+			message: 'Preregistration and AEIFs successfully created',
+		};
+	}
+}

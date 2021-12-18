@@ -5,7 +5,7 @@ import { AefiSignsSymptomsDto } from '../common/dtos/aefi-signs-symptoms.dto';
 export class AefiService {
 	async getAllAefiSignsAndSymptoms(): Promise<AefiSignsSymptomsDto> {
 		return {
-			aefiSeverity: [
+			aefiSymptoms: [
 				{
 					name: 'Abscess',
 					dataElementId: 'exAlKwep7t',
@@ -19,7 +19,7 @@ export class AefiService {
 					dataElementId: 'suZQZG8Txu',
 				},
 			],
-			aefiSymptoms: [
+			aefiSeverity: [
 				{
 					name: 'Hospitalization',
 					dataElementId: 're9PVavv8r',
