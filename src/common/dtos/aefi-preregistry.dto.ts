@@ -1,8 +1,11 @@
 import { CreateAefiDto } from './create-aefi.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { Vaccination } from './vaccination.dto';
 
 export class AefiPreregistrationDto {
+	@ApiProperty()
 	aefiSignsAndSymptoms: CreateAefiDto;
+	@ApiProperty()
 	vaccination: Vaccination;
 	@ApiProperty()
 	@ApiProperty({ example: 'John' })
@@ -25,13 +28,4 @@ export class AefiPreregistrationDto {
 	@ApiProperty()
 	@ApiProperty({ example: 'VBV90JU1' })
 	nationalID?: string;
-}
-
-export class Vaccination {
-	@ApiProperty({ example: '28/1/1900' })
-	dateOfVaccination: string;
-	@ApiProperty({ example: 'Bingu National Stadium ' })
-	vaccinationSite: string;
-	@ApiProperty({ example: 'QsbEbv8qqt' })
-	typeOfVaccination: string;
 }

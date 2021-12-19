@@ -14,5 +14,5 @@ export class CreateAefiDto {
 	medicalHistory: string;
 	@IsNotEmpty()
 	@ApiProperty({ example: 'bvS3GVQAlj' })
-	aefiSeverity: string;
+	aefiSeverityId: string;
 }
