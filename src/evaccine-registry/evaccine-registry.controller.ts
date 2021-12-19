@@ -4,20 +4,25 @@ import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
 import { TrackedEntityInstanceNotFoundException } from '../common/exceptions';
 import { ValidatePhoneNumberPipe } from '../common/pipes/phoneNumber/validate-phone-number.pipe';
 import { ValidatePatientSideEffectRecordPipe } from '../common/pipes/valiidatePatientSideEffectRecord/validate-patient-side-effect-record.pipe';
-import { EvaccineRegistryService } from './evaccine-registry.service';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { EvaccineRegistryService, QUERY_DISCRIMINATOR } from './evaccine-registry.service';
+import { ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
+
 
 @Controller('e-vaccine-registries')
 export class EvaccineRegistryController {
 	constructor(private readonly eVaccineRegistryService: EvaccineRegistryService) {}
 
 	@Get('phone-number/:phoneNumber')
+	@ApiParam({
+		name: 'phoneNumber',
+		description: 'Individuals phone number, please note the number should not exclude the country code, e.g. 0999999999',
+	})
 	@ApiResponse({ type: TrackedEntityInstanceFoundDto, status: 200 })
 	@ApiResponse({ status: 404 })
 	async findTrackedEntityInstanceByPhoneNumber(
 		@Param('phoneNumber', new ValidatePhoneNumberPipe()) phoneNumber: string,
 	): Promise<TrackedEntityInstanceFoundDto> {
-		const trackedEntityInstance = await this.eVaccineRegistryService.findTrackedEntityInstanceByPhoneNumber(phoneNumber);
+		const trackedEntityInstance = await this.eVaccineRegistryService.getTrackedEntityInstance(QUERY_DISCRIMINATOR.PHONE_NUMBER, phoneNumber);
 		if (trackedEntityInstance) {
 			return trackedEntityInstance;
 		}
@@ -25,10 +30,11 @@ export class EvaccineRegistryController {
 	}
 
 	@Get('/epi-number/:epiNumber')
+	@ApiParam({ name: 'epiNumber', description: 'Individuals EPI_Number, please note the number should be appended with "EPI_", e.g. EPI_0380913' })
 	@ApiResponse({ type: TrackedEntityInstanceFoundDto, status: 200 })
 	@ApiResponse({ status: 404 })
 	async findTrackedEntityInstanceByEpiNumber(@Param('epiNumber') epiNumber: string): Promise<TrackedEntityInstanceFoundDto> {
-		const trackedEntityInstance = await this.eVaccineRegistryService.findTrackedEntityInstanceByEpiNumber(epiNumber);
+		const trackedEntityInstance = await this.eVaccineRegistryService.getTrackedEntityInstance(QUERY_DISCRIMINATOR.EPI_NUMBER, epiNumber);
 		if (trackedEntityInstance) {
 			return trackedEntityInstance;
 		}
@@ -36,7 +42,8 @@ export class EvaccineRegistryController {
 	}
 
 	@Post(':epiNumber')
-	@ApiBody({ type: [CreateAefiDto], description: 'Sample Description' })
+	@ApiParam({ name: 'epiNumber', description: 'Individuals EPI_Number, please note the number should be appended with "EPI_", e.g. EPI_0380913' })
+	@ApiBody({ type: CreateAefiDto, description: 'Sample Description' })
 	async createTrackedEntityInstanceSideEffectsRecord(
 		@Param('epiNumber') epiNumber: string,
 		@Body(new ValidatePatientSideEffectRecordPipe())

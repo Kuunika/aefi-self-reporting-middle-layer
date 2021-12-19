@@ -9,5 +9,6 @@ FROM node:16.11.1-alpine
 WORKDIR /usr/src/app
 COPY --from=building /usr/src/app/package*.json ./
 RUN npm install --only=prod
+RUN apk add nano
 COPY --from=building /usr/src/app/dist ./
 CMD ["node", "main.js"]
