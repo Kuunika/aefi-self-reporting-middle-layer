@@ -4,10 +4,12 @@ import { EvaccineRegistryModule } from './evaccine-registry/evaccine-registry.mo
 import { VaccinePreregistrationModule } from './vaccine-preregistration/vaccine-preregistration.module';
 import { AefiModule } from './aefi/aefi.module';
 import { VaccineModule } from './vaccine/vaccine.module';
+import { AppController } from './app.controller';
+import { OrganisationalUnitModule } from './organisational-unit/organisational-unit.module';
 
 @Module({
-	imports: [ConfigModule.forRoot({ isGlobal: true }), EvaccineRegistryModule, VaccinePreregistrationModule, AefiModule, VaccineModule],
-	controllers: [],
+	imports: [ConfigModule.forRoot({ isGlobal: true }), EvaccineRegistryModule, VaccinePreregistrationModule, AefiModule, VaccineModule, OrganisationalUnitModule],
+	controllers: [AppController],
 	providers: [],
 })
 export class AppModule {}
