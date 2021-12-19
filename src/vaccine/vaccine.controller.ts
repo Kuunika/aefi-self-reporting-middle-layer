@@ -8,7 +8,7 @@ export class VaccineController {
 	constructor(private readonly vaccineService: VaccineService) {}
 
 	@Get()
-	@ApiResponse({ type: VaccineTypeDto, status: 200 })
+	@ApiResponse({ type: [VaccineTypeDto], status: 200 })
 	getAllVaccineTypes() {
 		return this.vaccineService.getAllVaccineTypes();
 	}

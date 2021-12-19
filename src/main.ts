@@ -6,8 +6,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	const config = app.get<ConfigService>(ConfigService);
-	const port = config.get<number>('AEFI_API_PORT');
-
+	const port = config.get<number>('AEFI_API_PORT') || 3000;
+	app.setGlobalPrefix('api');
 	const documentConfig = new DocumentBuilder()
 		.setTitle('AEFI API')
 		.setDescription('AEFI Reporting API for WhatsApp Chatbot')
