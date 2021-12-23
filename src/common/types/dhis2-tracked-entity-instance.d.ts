@@ -3,6 +3,8 @@ export interface IDhis2TrackedEntityInstance {
 }
 
 export interface TrackedEntityInstance {
+	orgUnit: string;
+	trackedEntityInstance: string;
 	attributes: Attribute[];
 	enrollments: Enrollment[];
 }

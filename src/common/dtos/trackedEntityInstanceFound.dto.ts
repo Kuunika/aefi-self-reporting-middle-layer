@@ -13,4 +13,6 @@ export class TrackedEntityInstanceFoundDto {
 	programId: string;
 	@ApiProperty({ example: 'ab1n9aHTKD' })
 	trackedEntityInstanceId: string;
+	@ApiProperty({ example: 'p039dHeid' })
+	orgUnitId: string;
 }

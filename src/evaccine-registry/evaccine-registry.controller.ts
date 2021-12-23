@@ -6,11 +6,11 @@ import { ValidatePhoneNumberPipe } from '../common/pipes/phoneNumber/validate-ph
 import { ValidatePatientSideEffectRecordPipe } from '../common/pipes/valiidatePatientSideEffectRecord/validate-patient-side-effect-record.pipe';
 import { EvaccineRegistryService, QUERY_DISCRIMINATOR } from './evaccine-registry.service';
 import { ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
-
+import { OhspClientService } from 'src/ohsp/ohsp-client.service';
 
 @Controller('e-vaccine-registries')
 export class EvaccineRegistryController {
-	constructor(private readonly eVaccineRegistryService: EvaccineRegistryService) {}
+	constructor(private readonly eVaccineRegistryService: EvaccineRegistryService, private readonly ohspClientService: OhspClientService) {}
 
 	@Get('phone-number/:phoneNumber')
 	@ApiParam({
@@ -41,17 +41,15 @@ export class EvaccineRegistryController {
 		throw new TrackedEntityInstanceNotFoundException();
 	}
 
-	@Post(':epiNumber')
-	@ApiParam({ name: 'epiNumber', description: 'Individuals EPI_Number, please note the number should be appended with "EPI_", e.g. EPI_0380913' })
+	@Post()
 	@ApiBody({ type: CreateAefiDto, description: 'Sample Description' })
 	async createTrackedEntityInstanceSideEffectsRecord(
-		@Param('epiNumber') epiNumber: string,
 		@Body(new ValidatePatientSideEffectRecordPipe())
 		payload: CreateAefiDto,
 	): Promise<{
 		message: string;
 	}> {
-		this.eVaccineRegistryService.createTrackedEntityInstanceSideEffectsRecord(epiNumber, payload);
+		this.ohspClientService.createVaccineEvent(payload);
 		return {
 			message: 'Record Created Successfully',
 		};

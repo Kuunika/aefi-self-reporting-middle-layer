@@ -1,10 +1,10 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, ArrayNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAefiDto {
-	@IsNotEmpty()
-	@ApiProperty({ example: ['exAlKwep7t', '3cjEwgh5UL'] })
-	aefiSideEffects: string[];
+	@ArrayNotEmpty()
+	@ApiProperty({ example: [{ dataElement: 'exAlKwep7t', value: 'Yes' }] })
+	aefiSideEffects: aefiSideEffect[];
 	@IsOptional()
 	@IsNotEmpty()
 	@ApiProperty({ nullable: true, example: 'Pain in abdomen' })
@@ -15,4 +15,22 @@ export class CreateAefiDto {
 	@IsNotEmpty()
 	@ApiProperty({ example: 'bvS3GVQAlj' })
 	aefiSeverityId: string;
+	@IsNotEmpty()
+	@ApiProperty({ example: 'u903i91434' })
+	programId: string;
+	@IsNotEmpty()
+	@ApiProperty({ example: 'op90Imdoaw' })
+	trackedEntityInstanceId: string;
+	@IsNotEmpty()
+	@ApiProperty({ example: 'o78jf8j29r' })
+	orgUnitId: string;
+}
+
+export class aefiSideEffect {
+	@IsNotEmpty()
+	@ApiProperty({ example: '3cjEwgh5UL' })
+	dataElement: string;
+	@IsNotEmpty()
+	@ApiProperty({ example: 'Yes' })
+	value: string;
 }
