@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { ServerUnavailableException } from '../common/exceptions';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
 import { ConfigService } from '@nestjs/config';
 import { IDhis2TrackedEntityInstance, TrackedEntityInstance, Event as Dhis2Event } from '../common/types/dhis2-tracked-entity-instance';
+import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
+import moment from 'moment';
 
 export enum QUERY_DISCRIMINATOR {
 	PHONE_NUMBER,
@@ -26,7 +28,6 @@ export class EvaccineRegistryService {
 
 		return {
 			programId: event?.program,
-			trackedEntityInstanceId: event?.trackedEntityInstance,
 			dateOfSecondDosage: event?.dataValues?.find((value) => value?.dataElement === AEFI_SECOND_VACCINE_DATE)?.value ?? '',
 		};
 	}
@@ -56,9 +57,34 @@ export class EvaccineRegistryService {
 				firstName,
 				lastName,
 				...this.getCurrentEnrolledEvent(currentTrackedInstance),
+				trackedEntityInstanceId: currentTrackedInstance.trackedEntityInstance,
+				orgUnitId: currentTrackedInstance.orgUnit,
 			};
 		}
 		return null;
+	}
+
+	async createVaccineEvent(createAefiDto: CreateAefiDto) {
+		const AEFI_VACCINE_STAGE = this.configService.get<string>('AEFI_VACCINE_STAGE');
+		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
+		const trackedEntityInstance = createAefiDto.trackedEntityInstanceId;
+		const payload: CreateNewDhis2EventDto = {
+			program: createAefiDto.programId,
+			programStage: AEFI_VACCINE_STAGE,
+			trackedEntityInstance: createAefiDto.trackedEntityInstanceId,
+			orgUnit: createAefiDto.orgUnitId,
+			eventDate: moment().format('YYYY-MM-DD'),
+			status: 'COMPLETE',
+			completedDate: moment().format('YYYY-MM-DD'),
+			dataValues: [...createAefiDto.aefiSideEffects, { dataElement: AEFI_SEVERITY, value: createAefiDto.aefiSeverityId }],
+		};
+
+		try {
+			this.ohspClient.createDhis2Resource('/', payload);
+			return true;
+		} catch (error) {
+			throw new ServiceUnavailableException();
+		}
 	}
 
 	async getTrackedEntityInstance(discriminator: QUERY_DISCRIMINATOR, value: string) {
@@ -71,9 +97,5 @@ export class EvaccineRegistryService {
 
 		Dhis2TrackedEntityInstance = await this.ohspClient.queryTrackedEntityByEpiNumber(value);
 		return this.createTrackedEntityInstanceDto(Dhis2TrackedEntityInstance);
-	}
-
-	async createTrackedEntityInstanceSideEffectsRecord(epiNo: string, payload: CreateAefiDto) {
-		return true;
 	}
 }
