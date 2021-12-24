@@ -5,7 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
 import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
 import { Dhis2Option, Dhis2OptionsSet, OrgUnit, IDhis2TrackedEntityInstance, Dhis2DataElement } from '../common/types';
-import moment from 'moment';
+import * as moment from 'moment';
 @Injectable()
 export class OhspClientService {
 	constructor(private readonly httpService: HttpService, private readonly configService: ConfigService) {}

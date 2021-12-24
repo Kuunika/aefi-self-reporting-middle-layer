@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAefiDto {
 	@ArrayNotEmpty()
-	@ApiProperty({ example: [{ dataElement: 'exAlKwep7t', value: 'Yes' }] })
+	@ApiProperty({ example: [{ dataElement: 'exAlKwep7t', value: true }] })
 	aefiSideEffects: aefiSideEffect[];
 	@IsOptional()
 	@IsNotEmpty()
@@ -15,9 +15,6 @@ export class CreateAefiDto {
 	@IsNotEmpty()
 	@ApiProperty({ example: 'bvS3GVQAlj' })
 	aefiSeverityId: string;
-	@IsNotEmpty()
-	@ApiProperty({ example: 'u903i91434' })
-	programId: string;
 	@IsNotEmpty()
 	@ApiProperty({ example: 'op90Imdoaw' })
 	trackedEntityInstanceId: string;

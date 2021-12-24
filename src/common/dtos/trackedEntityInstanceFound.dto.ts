@@ -8,7 +8,9 @@ export class TrackedEntityInstanceFoundDto {
 	@ApiProperty({ example: 'EPI_000000' })
 	epiNumber: string;
 	@ApiProperty({ example: '28/7/2021' })
-	dateOfSecondDosage?: string;
+	dateOfNextDosage?: string;
+	@ApiProperty({ example: 'Fully Vaccinated' })
+	nextDosageMessage?: string;
 	@ApiProperty({ example: '9b776x0Ho4' })
 	programId: string;
 	@ApiProperty({ example: 'ab1n9aHTKD' })
