@@ -67,9 +67,10 @@ export class OhspClientService {
 	async createVaccineEvent(createAefiDto: CreateAefiDto) {
 		const AEFI_VACCINE_STAGE = this.configService.get<string>('AEFI_VACCINE_STAGE');
 		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
+		const AEFI_VACCINE_PROGRAM = this.configService.get<string>('AEFI_VACCINE_PROGRAM');
 		const trackedEntityInstance = createAefiDto.trackedEntityInstanceId;
 		const payload: CreateNewDhis2EventDto = {
-			program: createAefiDto.programId,
+			program: AEFI_VACCINE_PROGRAM,
 			programStage: AEFI_VACCINE_STAGE,
 			trackedEntityInstance: createAefiDto.trackedEntityInstanceId,
 			orgUnit: createAefiDto.orgUnitId,
