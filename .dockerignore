@@ -1,5 +1,6 @@
 /node_modules
 Dockerfile
+documentation
 docker-compose.yml
 .env
 .env.example
