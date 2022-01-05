@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { CacheKey, CacheTTL, Controller, Get } from '@nestjs/common';
 import { OhspClientService } from 'src/ohsp/ohsp-client.service';
 import { ApiResponse } from '@nestjs/swagger';
 import { OrganisationUnitDto } from '../common/dtos/organisationUnits.dto';
@@ -7,6 +7,8 @@ import { OrganisationUnitDto } from '../common/dtos/organisationUnits.dto';
 export class OrganisationalUnitController {
 	constructor(private readonly ohspClient: OhspClientService) {}
 	@Get()
+	@CacheKey('all_org_units')
+	@CacheTTL(864_000)
 	@ApiResponse({ type: [OrganisationUnitDto], status: 200 })
 	getAllOrganisationalUnit() {
 		return this.ohspClient.getAllOrganisationalUnits();
