@@ -50,14 +50,14 @@ export class VaccinePreregistrationService {
 			enrolments: [
 				{
 					enrolmentDate: moment().format('YYYY-MM-DD'),
-					incidentDate: moment().format('YYYY-MM-DD'),
+					incidentDate: payload.vaccination.dateOfVaccination,
 					orgUnit: payload.aefiSignsAndSymptoms.orgUnitId,
 					program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
 					events: [
 						{
 							program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
 							orgUnit: payload.aefiSignsAndSymptoms.orgUnitId,
-							eventDate: moment().format('YYYY-MM-DD'),
+							eventDate: payload.vaccination.dateOfVaccination,
 							status: 'COMPLETED',
 							storedBy: this.config.get<string>('AEFI_STORED_BY'),
 							programStage: 'AQP9OJtKs8o',
@@ -72,5 +72,10 @@ export class VaccinePreregistrationService {
 			orgUnit: payload.aefiSignsAndSymptoms.orgUnitId,
 			trackedEntityType: ENROLMENT_TRACKED_ENTITY_TYPE,
 		};
+		try {
+			return this.ohspClient.createDhis2Resource('/trackedEntityInstances', enrolmentAndEventPayload);
+		} catch (err) {
+			console.log(err);
+		}
 	}
 }

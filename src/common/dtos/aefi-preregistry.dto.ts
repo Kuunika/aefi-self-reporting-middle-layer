@@ -14,7 +14,7 @@ export class AefiPreregistrationDto {
 	@ApiProperty({ example: 'Doe' })
 	surname: string;
 	@ApiProperty()
-	@ApiProperty({ examples: ['male', 'female'] })
+	@ApiProperty({ example: 'male' })
 	gender: string;
 	@ApiProperty()
 	@ApiProperty({ example: '1992-04-10' })
@@ -25,7 +25,10 @@ export class AefiPreregistrationDto {
 	@ApiProperty()
 	@ApiProperty({ example: 'VBV90JU1' })
 	nationalID?: string;
-
+	@ApiProperty()
+	@ApiProperty({ example: 'Blantyre' })
 	districtOfResidence: string;
+	@ApiProperty()
+	@ApiProperty({ example: '1408 Elm St. Mandala' })
 	physicalAddress: string;
 }
