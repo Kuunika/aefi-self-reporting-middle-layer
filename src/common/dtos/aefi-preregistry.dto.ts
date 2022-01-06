@@ -14,18 +14,18 @@ export class AefiPreregistrationDto {
 	@ApiProperty({ example: 'Doe' })
 	surname: string;
 	@ApiProperty()
-	@ApiProperty({ example: true })
-	sex: boolean;
+	@ApiProperty({ examples: ['male', 'female'] })
+	gender: string;
 	@ApiProperty()
-	@ApiProperty({ example: '28/1/1900' })
+	@ApiProperty({ example: '1992-04-10' })
 	dob: string;
-	@ApiProperty()
-	@ApiProperty({ example: '1408 Elm Street' })
-	physicalAddress: string;
 	@ApiProperty()
 	@ApiProperty({ example: '0999999999' })
 	phoneNumber: string;
 	@ApiProperty()
 	@ApiProperty({ example: 'VBV90JU1' })
 	nationalID?: string;
+
+	districtOfResidence: string;
+	physicalAddress: string;
 }

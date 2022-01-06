@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
 import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
 import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
-import { Dhis2Option, Dhis2OptionsSet, OrgUnit, IDhis2TrackedEntityInstance, Dhis2DataElement } from '../common/types';
+import { Dhis2Option, Dhis2OptionSet, OrgUnit, IDhis2TrackedEntityInstance, Dhis2DataElement } from '../common/types';
 import * as moment from 'moment';
 @Injectable()
 export class OhspClientService {
@@ -42,7 +42,7 @@ export class OhspClientService {
 
 	async getAllVaccines() {
 		const AEFI_VACCINE_DHIS_OPTIONS = this.configService.get('AEFI_VACCINE_DHIS_OPTIONS');
-		const request = this.httpService.get<Dhis2OptionsSet>(`/optionSets/${AEFI_VACCINE_DHIS_OPTIONS}.json`);
+		const request = this.httpService.get<Dhis2OptionSet>(`/optionSets/${AEFI_VACCINE_DHIS_OPTIONS}.json`);
 		const response = await lastValueFrom(request);
 		const vaccineIds = response.data.options;
 		return Promise.all(vaccineIds.map((vaccine) => this.getVaccineName(vaccine.id)));
@@ -53,7 +53,7 @@ export class OhspClientService {
 		return response.data;
 	}
 	async getOptionsSetValues(optionSetId: string) {
-		const request = this.httpService.get<Dhis2OptionsSet>(`/optionSets/${optionSetId}.json`);
+		const request = this.httpService.get<Dhis2OptionSet>(`/optionSets/${optionSetId}.json`);
 		const response = await lastValueFrom(request);
 		return response.data;
 	}
