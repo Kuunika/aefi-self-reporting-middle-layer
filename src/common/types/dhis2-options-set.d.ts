@@ -1,4 +1,4 @@
-export interface Dhis2OptionsSet {
+export interface Dhis2OptionSet {
 	created: string;
 	lastUpdated: string;
 	name: string;
