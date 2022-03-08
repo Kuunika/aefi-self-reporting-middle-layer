@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataElement, Dhis2Constant, Dhis2Constants, Dhis2DataElement } from '../common/types';
+import { DataElement, Dhis2DataElement } from '../common/types';
 import { AefiSignsSymptomsDto } from '../common/dtos/aefi-signs-symptoms.dto';
 import { OhspClientService } from 'src/ohsp/ohsp-client.service';
 import { ConfigService } from '@nestjs/config';

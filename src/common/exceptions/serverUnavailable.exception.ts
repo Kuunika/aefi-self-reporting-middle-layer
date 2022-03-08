@@ -1,4 +1,4 @@
-import { HttpCode, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class ServerUnavailableException extends HttpException {
 	constructor() {
