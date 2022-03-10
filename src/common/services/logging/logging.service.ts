@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Logger, createLogger } from 'winston';
 import { join } from 'path';
-import DailyRotateFile from 'winston-daily-rotate-file';
+import * as DailyRotateFile from 'winston-daily-rotate-file';
 
 @Injectable()
 export class LoggingService {
@@ -32,8 +32,8 @@ export class LoggingService {
 	private fileTransport(logType: string): DailyRotateFile {
 		return new DailyRotateFile({
 			filename: `aefi-%DATE%.${logType}.log`,
-			dirname: join(__dirname, '..', '..', 'logs'),
-			datePattern: 'YYYY-MM-DD-HH',
+			dirname: join(__dirname, '..', '..', '..', '..', 'logs'),
+			datePattern: 'YYYY-MM-DD',
 			maxSize: '20m',
 		});
 	}

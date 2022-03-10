@@ -1,12 +1,11 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
-import { ServerUnavailableException } from '../common/exceptions';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
 import { ConfigService } from '@nestjs/config';
 import { IDhis2TrackedEntityInstance, TrackedEntityInstance, Event as Dhis2Event } from '../common/types/dhis2-tracked-entity-instance';
 import { CreateNewDhis2EventDto, DataValue } from '../common/dtos/create-new-dhis2-event.dto';
-import * as moment from 'moment';
+import moment from 'moment';
 import { VaccineService } from 'src/vaccine/vaccine.service';
 import { VaccineTypeDto } from 'src/common/dtos/vaccine-type.dto';
 
