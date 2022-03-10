@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
 import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
 import { TrackedEntityInstanceNotFoundException } from '../common/exceptions';
 import { ValidatePhoneNumberPipe } from '../common/pipes/phoneNumber/validate-phone-number.pipe';
-import { ValidatePatientSideEffectRecordPipe } from '../common/pipes/valiidatePatientSideEffectRecord/validate-patient-side-effect-record.pipe';
+import { ValidatePatientSideEffectRecordPipe } from '../common/pipes';
 import { EvaccineRegistryService, QUERY_DISCRIMINATOR } from './evaccine-registry.service';
 import { ApiBody, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { OhspClientService } from 'src/ohsp/ohsp-client.service';
+import { LoggingInterceptor } from '../common/interceptors/logging.interceptor';
 
+@UseInterceptors(LoggingInterceptor)
 @Controller('e-vaccine-registries')
 export class EvaccineRegistryController {
 	constructor(private readonly eVaccineRegistryService: EvaccineRegistryService, private readonly ohspClientService: OhspClientService) {}

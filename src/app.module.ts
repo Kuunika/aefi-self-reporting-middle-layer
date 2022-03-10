@@ -7,10 +7,12 @@ import { VaccineModule } from './vaccine/vaccine.module';
 import { AppController } from './app.controller';
 import { OrganisationalUnitModule } from './organisational-unit/organisational-unit.module';
 import { DistrictModule } from './district/district.module';
+import { LoggingModule } from './common/services/logging/logging.module';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
+		LoggingModule,
 		EvaccineRegistryModule,
 		VaccinePreregistrationModule,
 		AefiModule,
