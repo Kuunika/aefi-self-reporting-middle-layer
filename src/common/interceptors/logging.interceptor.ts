@@ -8,7 +8,7 @@ export class LoggingInterceptor implements NestInterceptor {
 	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
 		const httpContext = context.switchToHttp();
 		const request = httpContext.getRequest<Request>();
-		this.log.info(`${Date.now()} - Inbound Request: Route ${request.url}; Method ${request.method}`);
+		this.log.info(`${Date.now()} - Inbound Request: Route ${request.url}; Method ${request.method}\n`);
 		if (request.method !== 'GET') {
 			this.log.info(JSON.stringify(request.body));
 		}
@@ -16,11 +16,11 @@ export class LoggingInterceptor implements NestInterceptor {
 			tap({
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				next: (val: unknown): void => {
-					this.log.info(`${Date.now()} - Request Successful:  Route ${request.url}; Method ${request.method}`);
+					this.log.info(`Time:${new Date()} - Request Successful:  Route ${request.url}; Method ${request.method}\n`);
 				},
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				error: (err: Error): void => {
-					this.log.error(`${Date.now()} - Request Failed:  Route ${request.url}; Method ${request.method}`);
+					this.log.error(`${new Date()} - Request Failed:  Route ${request.url}; Method ${request.method}`);
 				},
 			}),
 		);
