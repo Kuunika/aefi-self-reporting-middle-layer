@@ -1,4 +1,4 @@
-import { CacheInterceptor, Controller, Get, UseInterceptors } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { DistrictsDto } from '../common/dtos/districts.dto';
 import { DistrictService } from './district.service';

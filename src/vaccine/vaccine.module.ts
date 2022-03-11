@@ -1,5 +1,4 @@
-import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { Module } from '@nestjs/common';
 import { OhspModule } from '../ohsp/ohsp.module';
 import { VaccineController } from './vaccine.controller';
 import { VaccineService } from './vaccine.service';

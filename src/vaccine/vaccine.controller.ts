@@ -1,4 +1,4 @@
-import { CacheInterceptor, Controller, Get, UseInterceptors } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { VaccineTypeDto } from 'src/common/dtos/vaccine-type.dto';
 import { VaccineService } from './vaccine.service';
 import { ApiResponse } from '@nestjs/swagger';

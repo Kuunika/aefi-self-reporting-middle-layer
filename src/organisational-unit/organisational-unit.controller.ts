@@ -1,4 +1,4 @@
-import { CacheInterceptor, Controller, Get, UseInterceptors } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { OhspClientService } from 'src/ohsp/ohsp-client.service';
 import { ApiResponse } from '@nestjs/swagger';
 import { OrganisationUnitDto } from '../common/dtos/organisationUnits.dto';
