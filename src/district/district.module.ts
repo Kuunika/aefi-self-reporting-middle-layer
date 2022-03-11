@@ -6,18 +6,7 @@ import { DistrictService } from './district.service';
 
 @Module({
 	controllers: [DistrictController],
-	providers: [
-		DistrictService,
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: CacheInterceptor,
-		},
-	],
-	imports: [
-		OhspModule,
-		CacheModule.register({
-			ttl: 864_000,
-		}),
-	],
+	providers: [DistrictService],
+	imports: [OhspModule],
 })
 export class DistrictModule {}

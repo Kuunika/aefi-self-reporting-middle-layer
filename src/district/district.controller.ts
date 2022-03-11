@@ -4,7 +4,6 @@ import { DistrictsDto } from '../common/dtos/districts.dto';
 import { DistrictService } from './district.service';
 
 @Controller('districts')
-@UseInterceptors(CacheInterceptor)
 export class DistrictController {
 	constructor(private readonly districtService: DistrictService) {}
 

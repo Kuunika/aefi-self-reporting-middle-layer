@@ -6,18 +6,7 @@ import { VaccineService } from './vaccine.service';
 
 @Module({
 	controllers: [VaccineController],
-	providers: [
-		VaccineService,
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: CacheInterceptor,
-		},
-	],
-	imports: [
-		OhspModule,
-		CacheModule.register({
-			ttl: 864_000,
-		}),
-	],
+	providers: [VaccineService],
+	imports: [OhspModule],
 })
 export class VaccineModule {}

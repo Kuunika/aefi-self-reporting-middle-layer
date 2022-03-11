@@ -4,7 +4,6 @@ import { VaccineService } from './vaccine.service';
 import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('vaccines')
-@UseInterceptors(CacheInterceptor)
 export class VaccineController {
 	constructor(private readonly vaccineService: VaccineService) {}
 
