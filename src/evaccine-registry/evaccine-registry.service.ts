@@ -61,11 +61,11 @@ export class EvaccineRegistryService {
 				return [...acc, ...cur.dataValues];
 			}, [])
 			.find((value) => value.dataElement === AEFI_SECOND_VACCINE_DATE)?.value;
-
+		const isFullyVaccinated = events.length >= numberOfVaccineDosages;
 		return {
 			programId: events[0]?.program,
-			dateOfNextDosage: events.length > numberOfVaccineDosages ? dateOfSecondDosage : null,
-			nextDosageMessage: events.length <= numberOfVaccineDosages ? 'Fully Vaccinated' : null,
+			dateOfNextDosage: isFullyVaccinated ? null : dateOfSecondDosage,
+			nextDosageMessage: isFullyVaccinated ? 'Fully Vaccinated' : 'Not Fully Vaccinated',
 		};
 	}
 
