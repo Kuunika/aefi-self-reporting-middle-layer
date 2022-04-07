@@ -5,3 +5,4 @@ export * from './dhis2-tracked-entity-instance';
 export * from './dhis2-data-elements';
 export * from './dhis2-constants';
 export * from './dhis2-constant';
+export * from './dhis2-new-tracked-entity-instance';
