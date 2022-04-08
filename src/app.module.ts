@@ -8,7 +8,7 @@ import { AppController } from './app.controller';
 import { OrganisationalUnitModule } from './organisational-unit/organisational-unit.module';
 import { DistrictModule } from './district/district.module';
 import { LoggingModule } from './common/services/logging/logging.module';
-import { TempModule } from './temp/temp.module';
+import { ClientsModule } from './clients/clients.module';
 
 @Module({
 	imports: [
@@ -20,7 +20,7 @@ import { TempModule } from './temp/temp.module';
 		VaccineModule,
 		OrganisationalUnitModule,
 		DistrictModule,
-		TempModule,
+		ClientsModule,
 	],
 	controllers: [AppController],
 	providers: [],

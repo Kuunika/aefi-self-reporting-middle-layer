@@ -2,7 +2,7 @@ export interface Dhis2EnrolmentAndEvent {
 	trackedEntityType: string;
 	orgUnit: string;
 	attributes: Attribute[];
-	enrolments: Enrolment[];
+	enrollments: Enrolment[];
 }
 
 export interface Attribute {
@@ -10,12 +10,11 @@ export interface Attribute {
 	value: string;
 }
 
-export interface Enrolment {
+export interface Enrollment {
 	orgUnit: string;
 	program: string;
 	enrolmentDate: string;
 	incidentDate: string;
-	events: Event[];
 }
 
 export interface Event {

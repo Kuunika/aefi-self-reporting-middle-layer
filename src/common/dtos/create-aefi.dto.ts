@@ -2,9 +2,10 @@ import { IsNotEmpty, IsOptional, ArrayNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAefiDto {
+	//TODO: need a way to validate the strings, could use cache to help
 	@ArrayNotEmpty()
-	@ApiProperty({ example: [{ dataElement: 'exAlKwep7t', value: true }] })
-	aefiSideEffects: aefiSideEffect[];
+	@ApiProperty({ example: ['exAlKwep7t'] })
+	aefiSideEffects: string[];
 	@IsOptional()
 	@IsNotEmpty()
 	@ApiProperty({ nullable: true, example: 'Pain in abdomen' })
@@ -17,17 +18,14 @@ export class CreateAefiDto {
 	aefiSeverityId: string;
 	@IsNotEmpty()
 	@ApiProperty({ example: 'op90Imdoaw' })
-	trackedEntityInstanceId: string;
+	trackedEntityInstance: string;
 	@IsNotEmpty()
 	@ApiProperty({ example: 'o78jf8j29r' })
-	orgUnitId: string;
-}
-
-export class aefiSideEffect {
+	orgUnit: string;
 	@IsNotEmpty()
-	@ApiProperty({ example: '3cjEwgh5UL' })
-	dataElement: string;
+	@ApiProperty({ example: '9sj0g30u52' })
+	program: string;
 	@IsNotEmpty()
-	@ApiProperty({ example: 'Yes' })
-	value: string;
+	@ApiProperty({ example: '24je045md2' })
+	programStage: string;
 }
