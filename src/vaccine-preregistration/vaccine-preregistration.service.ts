@@ -3,6 +3,7 @@ import { Dhis2EnrolmentAndEvent } from '../common/types/dhis2-enrolment-and-even
 import { AefiPreregistrationDto } from '../common/dtos/aefi-preregistry.dto';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { ConfigService } from '@nestjs/config';
+import { Dhis2NewTrackedEntityInstance } from '../common/types';
 import * as moment from 'moment';
 
 @Injectable()
@@ -11,7 +12,6 @@ export class VaccinePreregistrationService {
 
 	async createVaccinePreregistrationSelfReporting(payload: AefiPreregistrationDto) {
 		const ENROLMENT_TRACKED_ENTITY_TYPE = this.config.get<string>('ENROLMENT_TRACKED_ENTITY_TYPE');
-		const AEFI_SEVERITY = this.config.get<string>('AEFI_SEVERITY');
 		const enrolmentAndEventPayload: Dhis2EnrolmentAndEvent = {
 			attributes: [
 				{
@@ -47,33 +47,25 @@ export class VaccinePreregistrationService {
 					value: payload.physicalAddress,
 				},
 			],
-			enrolments: [
+			//TODO: See how you can validate this object
+			enrollments: [
 				{
 					enrolmentDate: moment().format('YYYY-MM-DD'),
-					incidentDate: payload.vaccination.dateOfVaccination,
-					orgUnit: payload.aefiSignsAndSymptoms.orgUnitId,
+					incidentDate: payload.incidentDate,
+					orgUnit: payload.orgUnit,
 					program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
-					events: [
-						{
-							program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
-							orgUnit: payload.aefiSignsAndSymptoms.orgUnitId,
-							eventDate: payload.vaccination.dateOfVaccination,
-							status: 'COMPLETED',
-							storedBy: this.config.get<string>('AEFI_STORED_BY'),
-							programStage: 'AQP9OJtKs8o',
-							dataValues: [
-								...payload.aefiSignsAndSymptoms.aefiSideEffects,
-								{ dataElement: AEFI_SEVERITY, value: payload.aefiSignsAndSymptoms.aefiSeverityId },
-							],
-						},
-					],
 				},
 			],
-			orgUnit: payload.aefiSignsAndSymptoms.orgUnitId,
+			orgUnit: payload.orgUnit,
 			trackedEntityType: ENROLMENT_TRACKED_ENTITY_TYPE,
 		};
 		try {
-			return this.ohspClient.createDhis2Resource('/trackedEntityInstances', enrolmentAndEventPayload);
+			const result = await this.ohspClient.createDhis2Resource<Dhis2EnrolmentAndEvent, Dhis2NewTrackedEntityInstance>(
+				'/trackedEntityInstances',
+				enrolmentAndEventPayload,
+			);
+			console.log(enrolmentAndEventPayload);
+			return result.response.importSummaries[0].reference;
 		} catch (err) {
 			console.log(err);
 		}

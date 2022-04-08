@@ -10,6 +10,7 @@ import * as moment from 'moment';
 export class OhspClientService {
 	constructor(private readonly httpService: HttpService, private readonly configService: ConfigService) {}
 
+	//TODO: Duplication and Ugly, Please Change
 	async queryTrackedEntityByPhoneNumber(phoneNumber: string) {
 		const AEFI_VACCINES_OU = this.configService.get('AEFI_VACCINES_OU');
 		const AEFI_VACCINES_OU_MODE = this.configService.get('AEFI_VACCINES_OU_MODE');
@@ -64,30 +65,6 @@ export class OhspClientService {
 		return response.data;
 	}
 
-	async createVaccineEvent(createAefiDto: CreateAefiDto) {
-		const AEFI_VACCINE_STAGE = this.configService.get<string>('AEFI_VACCINE_STAGE');
-		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
-		const AEFI_VACCINE_PROGRAM = this.configService.get<string>('AEFI_VACCINE_PROGRAM');
-		const trackedEntityInstance = createAefiDto.trackedEntityInstanceId;
-		const payload: CreateNewDhis2EventDto = {
-			program: AEFI_VACCINE_PROGRAM,
-			programStage: AEFI_VACCINE_STAGE,
-			trackedEntityInstance: createAefiDto.trackedEntityInstanceId,
-			orgUnit: createAefiDto.orgUnitId,
-			eventDate: moment().format('YYYY-MM-DD'),
-			status: 'COMPLETE',
-			completedDate: moment().format('YYYY-MM-DD'),
-			dataValues: [...createAefiDto.aefiSideEffects, { dataElement: AEFI_SEVERITY, value: createAefiDto.aefiSeverityId }],
-		};
-
-		try {
-			await this.httpService.post(`/events.json?programStage=${AEFI_VACCINE_STAGE}&trackedEntityInstance=${trackedEntityInstance}`, payload);
-			return true;
-		} catch (error) {
-			throw new ServiceUnavailableException();
-		}
-	}
-
 	async getDhis2Resource<T>(url: string) {
 		try {
 			const request = await this.httpService.get<T>(url);
@@ -99,11 +76,12 @@ export class OhspClientService {
 	}
 
 	async createDhis2Resource<Payload, Return>(url: string, payload: Payload): Promise<Return> {
+		//TODO: provide the error report summery in the debug
 		try {
 			const request = await this.httpService.post<Return>(url, payload);
 			const response = await lastValueFrom(request);
 			return response.data;
-		} catch (error) {
+		} catch (err) {
 			throw new ServiceUnavailableException();
 		}
 	}

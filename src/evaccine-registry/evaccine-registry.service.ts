@@ -8,6 +8,7 @@ import { CreateNewDhis2EventDto, DataValue } from '../common/dtos/create-new-dhi
 import moment from 'moment';
 import { VaccineService } from 'src/vaccine/vaccine.service';
 import { VaccineTypeDto } from 'src/common/dtos/vaccine-type.dto';
+import { DHIS2Status } from 'src/ohsp/enums/status';
 
 export enum QUERY_DISCRIMINATOR {
 	PHONE_NUMBER,
@@ -105,19 +106,20 @@ export class EvaccineRegistryService {
 	}
 
 	async createVaccineEvent(createAefiDto: CreateAefiDto) {
-		const AEFI_VACCINE_STAGE = this.configService.get<string>('AEFI_VACCINE_STAGE');
 		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
-		const AEFI_VACCINE_PROGRAM = this.configService.get<string>('AEFI_VACCINE_PROGRAM');
-		const trackedEntityInstance = createAefiDto.trackedEntityInstanceId;
+		const trackedEntityInstance = createAefiDto.trackedEntityInstance;
 		const payload: CreateNewDhis2EventDto = {
-			program: AEFI_VACCINE_PROGRAM,
-			programStage: AEFI_VACCINE_STAGE,
-			trackedEntityInstance: createAefiDto.trackedEntityInstanceId,
-			orgUnit: createAefiDto.orgUnitId,
+			program: createAefiDto.program,
+			programStage: createAefiDto.programStage,
+			trackedEntityInstance,
+			orgUnit: createAefiDto.orgUnit,
 			eventDate: moment().format('YYYY-MM-DD'),
-			status: 'COMPLETE',
+			status: DHIS2Status.COMPLETED,
 			completedDate: moment().format('YYYY-MM-DD'),
-			dataValues: [...createAefiDto.aefiSideEffects, { dataElement: AEFI_SEVERITY, value: createAefiDto.aefiSeverityId }],
+			dataValues: [
+				...createAefiDto.aefiSideEffects.map((dataElement) => ({ dataElement, value: 'True' })),
+				{ dataElement: AEFI_SEVERITY, value: createAefiDto.aefiSeverityId },
+			],
 		};
 
 		try {
