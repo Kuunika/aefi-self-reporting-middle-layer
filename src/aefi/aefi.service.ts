@@ -1,8 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { DataElement, Dhis2DataElement } from '../common/types';
 import { AefiSignsSymptomsDto } from '../common/dtos/aefi-signs-symptoms.dto';
-import { OhspClientService } from 'src/ohsp/ohsp-client.service';
+import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { ConfigService } from '@nestjs/config';
+import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
+import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
+import * as moment from 'moment';
+import { DHIS2Status } from 'src/ohsp/enums/status';
 
 @Injectable()
 export class AefiService {
@@ -19,6 +23,31 @@ export class AefiService {
 		return {
 			aefiSymptoms: signAndSymptomsDataElements.dataElements.map(formatDataElementToDto),
 			aefiSeverity: severityOptions.map((option) => ({ name: option.displayName, dataElementId: option.code })),
+		};
+	}
+
+	async report({ program, programStage, aefiSeverityId, aefiSideEffects, trackedEntityInstance, orgUnit }: CreateAefiDto) {
+		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
+		const payload: CreateNewDhis2EventDto = {
+			program,
+			programStage,
+			trackedEntityInstance,
+			orgUnit,
+			eventDate: moment().format('YYYY-MM-DD'),
+			status: DHIS2Status.COMPLETED,
+			completedDate: moment().format('YYYY-MM-DD'),
+			dataValues: [
+				...aefiSideEffects.map((dataElement) => ({ dataElement, value: 'True' })),
+				{ dataElement: AEFI_SEVERITY, value: aefiSeverityId },
+			],
+		};
+
+		console.log(JSON.stringify(payload));
+
+		const result = await this.ohspClient.createDhis2Resource('/events', payload);
+		console.log(result);
+		return {
+			message: `AEFIs successfully reported`,
 		};
 	}
 }
