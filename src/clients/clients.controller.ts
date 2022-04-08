@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { AefiPreregistrationDto } from '../common/dtos/aefi-preregistry.dto';
+import { ApiBody } from '@nestjs/swagger';
+import { CreateClientDto } from '../common/dtos/aefi-preregistry.dto';
 import { ClientsService } from './clients.service';
 import { CLIENT_NOT_FOUND_ERROR_MESSAGE } from './constants/error-messages';
 import { ClientNotFoundException } from './exceptions/client-not-found.exception';
@@ -15,7 +16,8 @@ export class ClientsController {
 	}
 
 	@Post()
-	create(@Body() payload: AefiPreregistrationDto) {
+	@ApiBody({ type: CreateClientDto, description: 'Creates a new client within the self registration program' })
+	create(@Body() payload: CreateClientDto) {
 		return this.clientsService.create(payload);
 	}
 }

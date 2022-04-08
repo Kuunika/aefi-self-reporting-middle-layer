@@ -8,10 +8,10 @@ export class VaccineService {
 	constructor(private readonly ohspClient: OhspClientService) {}
 
 	async getAllVaccineTypes(): Promise<VaccineTypeDto[]> {
-		const vaccinesfromOhsp = await this.ohspClient.getAllVaccines();
+		const vaccinesFromOhsp = await this.ohspClient.getAllVaccines();
 		const vaccineDosages = await this.getDosageInformation();
 
-		return vaccinesfromOhsp.map((vaccine) => ({
+		return vaccinesFromOhsp.map((vaccine) => ({
 			categoryOptionId: vaccine.id,
 			vaccineName: vaccine.displayName,
 			//TODO: Matching is a little brittle, consider replacing with a regex.

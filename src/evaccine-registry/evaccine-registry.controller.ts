@@ -52,7 +52,6 @@ export class EvaccineRegistryController {
 		message: string;
 	}> {
 		//const result = await this.ohspClientService.createVaccineEvent(payload);
-		//console.log(result);
 
 		return {
 			message: 'Record Created Successfully',

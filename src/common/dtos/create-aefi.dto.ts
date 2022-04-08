@@ -13,6 +13,7 @@ export class CreateAefiDto {
 	@IsNotEmpty()
 	@ApiProperty({ example: 'High Blood Pressure' })
 	medicalHistory: string;
+	@IsOptional()
 	@IsNotEmpty()
 	@ApiProperty({ example: 'bvS3GVQAlj' })
 	aefiSeverityId: string;

@@ -38,14 +38,10 @@ export class AefiService {
 			completedDate: moment().format('YYYY-MM-DD'),
 			dataValues: [
 				...aefiSideEffects.map((dataElement) => ({ dataElement, value: 'True' })),
-				{ dataElement: AEFI_SEVERITY, value: aefiSeverityId },
+				...(aefiSeverityId ? [{ dataElement: AEFI_SEVERITY, value: aefiSeverityId }] : []),
 			],
 		};
-
-		console.log(JSON.stringify(payload));
-
-		const result = await this.ohspClient.createDhis2Resource('/events', payload);
-		console.log(result);
+		await this.ohspClient.createDhis2Resource('/events', payload);
 		return {
 			message: `AEFIs successfully reported`,
 		};

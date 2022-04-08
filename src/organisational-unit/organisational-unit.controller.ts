@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { OhspClientService } from 'src/ohsp/ohsp-client.service';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { OrganisationUnitDto } from '../common/dtos/organisationUnits.dto';
 
 @Controller('organisational-units')

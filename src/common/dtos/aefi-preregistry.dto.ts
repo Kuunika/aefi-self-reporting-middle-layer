@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-export class AefiPreregistrationDto {
+export class CreateClientDto {
 	@ApiProperty({ example: 'John' })
 	firstName: string;
 	@ApiProperty({ example: 'Doe' })

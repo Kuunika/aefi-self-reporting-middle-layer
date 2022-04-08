@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Dhis2EnrolmentAndEvent } from '../common/types/dhis2-enrolment-and-event';
-import { AefiPreregistrationDto } from '../common/dtos/aefi-preregistry.dto';
+import { CreateClientDto } from '../common/dtos/aefi-preregistry.dto';
 import { Dhis2NewTrackedEntityInstance, IDhis2TrackedEntityInstance } from '../common/types';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { CLIENT_NOT_FOUND_ERROR_MESSAGE } from './constants/error-messages';
@@ -33,7 +33,7 @@ export class ClientsService {
 		throw new NotFoundException(CLIENT_NOT_FOUND_ERROR_MESSAGE);
 	}
 
-	async create(payload: AefiPreregistrationDto): Promise<FoundClient> {
+	async create(payload: CreateClientDto): Promise<FoundClient> {
 		const ENROLMENT_TRACKED_ENTITY_TYPE = this.config.get<string>('ENROLMENT_TRACKED_ENTITY_TYPE');
 		const enrolmentAndEventPayload: Dhis2EnrolmentAndEvent = {
 			attributes: [
@@ -87,14 +87,11 @@ export class ClientsService {
 				'/trackedEntityInstances',
 				enrolmentAndEventPayload,
 			);
-			console.log(enrolmentAndEventPayload);
 			return {
 				trackedEntityInstance: result.response.importSummaries[0].reference,
 				program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
 				programStage: this.config.get<string>('AEFI_SELF_REGISTRATION_STAGE'),
 			};
-		} catch (err) {
-			console.log(err);
-		}
+		} catch (err) {}
 	}
 }
