@@ -31,4 +31,4 @@ npm run start:prod
 
 ### Docker Run
 
-docker run -d -v $(pwd)/logs:/usr/src/app/logs --env-file .env -p 3000:3000 kuunika/aefii-self-reporting-middle-layer-api:1.1.1
+docker run -d -v $(pwd)/logs:/usr/src/app/logs --env-file .env -p 3000:3000 kuunika/aefii-self-reporting-middle-layer-api:2.0.0

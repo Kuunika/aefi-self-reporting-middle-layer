@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
-import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
+import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
 import { TrackedEntityInstanceNotFoundException } from '../common/exceptions';
 import { ValidatePhoneNumberPipe } from '../common/pipes/phoneNumber/validate-phone-number.pipe';
 import { ValidatePatientSideEffectRecordPipe } from '../common/pipes';
@@ -44,10 +44,10 @@ export class EvaccineRegistryController {
 	}
 
 	@Post()
-	@ApiBody({ type: CreateAefiDto, description: 'Sample Description' })
+	@ApiBody({ type: ReportAefiDto, description: 'Sample Description' })
 	async createTrackedEntityInstanceSideEffectsRecord(
 		@Body(new ValidatePatientSideEffectRecordPipe())
-		payload: CreateAefiDto,
+		payload: ReportAefiDto,
 	): Promise<{
 		message: string;
 	}> {

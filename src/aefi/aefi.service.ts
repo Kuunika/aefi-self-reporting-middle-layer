@@ -1,9 +1,9 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { DataElement, Dhis2DataElement } from '../common/types';
-import { AefiSignsSymptomsDto } from '../common/dtos/aefi-signs-symptoms.dto';
+import { AefiSignsSymptomsDto } from './dtos/aefi-signs-symptoms';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { ConfigService } from '@nestjs/config';
-import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
+import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
 import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
 import * as moment from 'moment';
 import { DHIS2Status } from 'src/ohsp/enums/status';
@@ -26,7 +26,7 @@ export class AefiService {
 		};
 	}
 
-	async report({ program, programStage, aefiSeverityId, aefiSideEffects, trackedEntityInstance, orgUnit }: CreateAefiDto) {
+	async report({ program, programStage, aefiSeverityId, aefiSideEffects, trackedEntityInstance, orgUnit }: ReportAefiDto) {
 		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
 		const payload: CreateNewDhis2EventDto = {
 			program,
@@ -43,7 +43,7 @@ export class AefiService {
 		};
 		await this.ohspClient.createDhis2Resource('/events', payload);
 		return {
-			message: `AEFIs successfully reported`,
+			message: 'AEFIs successfully reported',
 		};
 	}
 }

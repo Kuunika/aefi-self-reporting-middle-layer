@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { AefiSignsSymptomsDto } from '../common/dtos/aefi-signs-symptoms.dto';
 import { AefiService } from './aefi.service';
 import { ApiResponse } from '@nestjs/swagger';
-import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
+import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
+import { CreatedAefiDto, AefiSignsSymptomsDto } from './dtos';
 
 @Controller('aefis')
 export class AefiController {
@@ -15,7 +15,8 @@ export class AefiController {
 	}
 
 	@Post()
-	report(@Body() payload: CreateAefiDto) {
+	@ApiResponse({ type: CreatedAefiDto, status: 201 })
+	report(@Body() payload: ReportAefiDto) {
 		return this.aefiService.report(payload);
 	}
 }

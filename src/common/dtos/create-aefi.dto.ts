@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional, ArrayNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateAefiDto {
+export class ReportAefiDto {
 	//TODO: need a way to validate the strings, could use cache to help
 	@ArrayNotEmpty()
 	@ApiProperty({ example: ['exAlKwep7t'] })

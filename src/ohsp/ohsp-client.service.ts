@@ -3,7 +3,7 @@ import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
 import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
-import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
+import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
 import { Dhis2Option, Dhis2OptionSet, OrgUnit, IDhis2TrackedEntityInstance, Dhis2DataElement } from '../common/types';
 import * as moment from 'moment';
 @Injectable()

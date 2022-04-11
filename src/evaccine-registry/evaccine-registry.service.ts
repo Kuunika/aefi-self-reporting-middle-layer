@@ -1,6 +1,6 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
-import { CreateAefiDto } from '../common/dtos/create-aefi.dto';
+import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
 import { ConfigService } from '@nestjs/config';
 import { IDhis2TrackedEntityInstance, TrackedEntityInstance, Event as Dhis2Event } from '../common/types/dhis2-tracked-entity-instance';
@@ -105,7 +105,7 @@ export class EvaccineRegistryService {
 		return null;
 	}
 
-	async createVaccineEvent(createAefiDto: CreateAefiDto) {
+	async createVaccineEvent(createAefiDto: ReportAefiDto) {
 		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
 		const trackedEntityInstance = createAefiDto.trackedEntityInstance;
 		const payload: CreateNewDhis2EventDto = {

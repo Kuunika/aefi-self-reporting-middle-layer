@@ -5,7 +5,7 @@ import { CreateClientDto } from '../common/dtos/aefi-preregistry.dto';
 import { Dhis2NewTrackedEntityInstance, IDhis2TrackedEntityInstance } from '../common/types';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { CLIENT_NOT_FOUND_ERROR_MESSAGE } from './constants/error-messages';
-import { FoundClient } from './dtos/found-client.dto';
+import { ClientDto } from './dtos/found-client';
 //import { ClientNotFoundException } from './exceptions/client-not-found.exception';
 import { FindClientQueryString } from './query-strings/find-client';
 import * as moment from 'moment';
@@ -13,7 +13,7 @@ import * as moment from 'moment';
 @Injectable()
 export class ClientsService {
 	constructor(private readonly ohspClient: OhspClientService, private readonly config: ConfigService) {}
-	async find({ epi_number, phone_number }: FindClientQueryString): Promise<FoundClient> {
+	async find({ epi_number, phone_number }: FindClientQueryString): Promise<ClientDto> {
 		let trackedEntityInstance: IDhis2TrackedEntityInstance;
 		//TODO: find alternative, as more discriminators are added this code will need to change.
 		if (phone_number) {
@@ -33,7 +33,7 @@ export class ClientsService {
 		throw new NotFoundException(CLIENT_NOT_FOUND_ERROR_MESSAGE);
 	}
 
-	async create(payload: CreateClientDto): Promise<FoundClient> {
+	async create(payload: CreateClientDto): Promise<ClientDto> {
 		const ENROLMENT_TRACKED_ENTITY_TYPE = this.config.get<string>('ENROLMENT_TRACKED_ENTITY_TYPE');
 		const enrolmentAndEventPayload: Dhis2EnrolmentAndEvent = {
 			attributes: [
