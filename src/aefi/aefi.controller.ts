@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AefiService } from './aefi.service';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
 import { CreatedAefiDto, AefiSignsSymptomsDto } from './dtos';
 
@@ -15,6 +15,7 @@ export class AefiController {
 	}
 
 	@Post()
+	@ApiBody({ type: ReportAefiDto, description: 'Creates a new client within the self registration program' })
 	@ApiResponse({ type: CreatedAefiDto, status: 201 })
 	report(@Body() payload: ReportAefiDto) {
 		return this.aefiService.report(payload);
