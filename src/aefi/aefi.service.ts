@@ -36,12 +36,14 @@ export class AefiService {
 		vaccineCode,
 		medicalHistory,
 		aefiOtherSideEffects,
+		vaccinationDate,
 	}: ReportAefiDto) {
 		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
 		//TODO: find more appropriate name
 		const AEFI_VACCINE_DHIS_OPTIONS = this.configService.get<string>('AEFI_VACCINE_DHIS_OPTIONS');
 		const AEFI_MEDICAL_HISTORY = this.configService.get<string>('AEFI_MEDICAL_HISTORY');
 		const AEFI_OTHER_SPECIFY = this.configService.get<string>('AEFI_OTHER_SPECIFY');
+		const AEFI_VACCINATION_DATE = this.configService.get<string>('AEFI_VACCINATION_DATE');
 		const payload: CreateNewDhis2EventDto = {
 			program,
 			programStage,
@@ -54,6 +56,7 @@ export class AefiService {
 				{ dataElement: AEFI_VACCINE_DHIS_OPTIONS, value: vaccineCode },
 				{ dataElement: AEFI_MEDICAL_HISTORY, value: medicalHistory },
 				{ dataElement: AEFI_OTHER_SPECIFY, value: aefiOtherSideEffects },
+				{ dataElement: AEFI_VACCINATION_DATE, value: moment(vaccinationDate).format('YYYY-MM-DD') },
 				...aefiSideEffects.map((aefiSideEffect) => ({
 					dataElement: aefiSideEffect.dataElement,
 					value: aefiSideEffect?.value ? aefiSideEffect.value : 'True',

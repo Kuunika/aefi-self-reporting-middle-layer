@@ -18,10 +18,12 @@ export class ReportAefiDto {
 	@IsNotEmpty()
 	@ApiProperty({ example: 'bvS3GVQAlj' })
 	aefiSeverityId: string;
-	@IsOptional()
 	@IsNotEmpty()
 	@ApiProperty({ example: 'I2nf2go21' })
 	vaccineCode: string;
+	@IsNotEmpty()
+	@ApiProperty({ example: '2022-04-13' })
+	vaccinationDate: string;
 	@IsNotEmpty()
 	@ApiProperty({ example: 'op90Imdoaw' })
 	trackedEntityInstance: string;
