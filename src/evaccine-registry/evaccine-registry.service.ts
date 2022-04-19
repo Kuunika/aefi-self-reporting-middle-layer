@@ -105,31 +105,6 @@ export class EvaccineRegistryService {
 		return null;
 	}
 
-	async createVaccineEvent(createAefiDto: ReportAefiDto) {
-		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
-		const trackedEntityInstance = createAefiDto.trackedEntityInstance;
-		const payload: CreateNewDhis2EventDto = {
-			program: createAefiDto.program,
-			programStage: createAefiDto.programStage,
-			trackedEntityInstance,
-			orgUnit: createAefiDto.orgUnit,
-			eventDate: moment().format('YYYY-MM-DD'),
-			status: DHIS2Status.COMPLETED,
-			completedDate: moment().format('YYYY-MM-DD'),
-			dataValues: [
-				...createAefiDto.aefiSideEffects.map((dataElement) => ({ dataElement, value: 'True' })),
-				{ dataElement: AEFI_SEVERITY, value: createAefiDto.aefiSeverityId },
-			],
-		};
-
-		try {
-			this.ohspClient.createDhis2Resource('/', payload);
-			return true;
-		} catch (error) {
-			throw new ServiceUnavailableException();
-		}
-	}
-
 	async getTrackedEntityInstance(discriminator: QUERY_DISCRIMINATOR, value: string) {
 		let Dhis2TrackedEntityInstance;
 		if (discriminator === QUERY_DISCRIMINATOR.PHONE_NUMBER) {

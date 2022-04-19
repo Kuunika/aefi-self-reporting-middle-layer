@@ -32,6 +32,8 @@ export class OhspClientService {
 			`/trackedEntityInstances.json?ou=${AEFI_VACCINES_OU}&ouMode=${AEFI_VACCINES_OU_MODE}&filter=${AEFI_EPI_NUMBER_FILTER}:EQ:${epiNumber}&fields=enrollments[events],attributes,orgUnit,trackedEntityInstance`,
 		);
 		const response = await lastValueFrom(request);
+		console.log(response.data);
+
 		return response.data;
 	}
 

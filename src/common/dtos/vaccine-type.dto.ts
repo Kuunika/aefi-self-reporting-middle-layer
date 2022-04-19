@@ -7,4 +7,6 @@ export class VaccineTypeDto {
 	categoryOptionId: string;
 	@ApiProperty({ example: 1 })
 	numberOfDosages: number;
+	@ApiProperty({ example: 'I2nf2go21' })
+	vaccineCode: string;
 }

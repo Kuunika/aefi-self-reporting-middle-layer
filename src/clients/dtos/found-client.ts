@@ -1,15 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
 export class ClientDto {
 	@ApiProperty({
-		example: 'The unique identifier for the client',
+		example: 'd0m3eaq9',
 	})
 	trackedEntityInstance: string;
 	@ApiProperty({
-		example: 'The Identifier of the given vaccine program',
+		example: 'si3f0a32',
 	})
 	program: string;
 	@ApiProperty({
-		example: 'The Identifier of the given vaccine program stage',
+		example: '3id9smf2',
 	})
 	programStage: string;
+	@ApiProperty({
+		example: 'John',
+	})
+	firstName: string;
+	@ApiProperty({
+		example: 'Doe',
+	})
+	surname: string;
 }

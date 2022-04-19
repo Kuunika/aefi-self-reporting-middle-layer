@@ -1,11 +1,12 @@
-import { IsNotEmpty, IsOptional, ArrayNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional, ArrayNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Optional } from '@nestjs/common';
 
 export class ReportAefiDto {
 	//TODO: need a way to validate the strings, could use cache to help
 	@ArrayNotEmpty()
 	@ApiProperty({ example: ['exAlKwep7t'] })
-	aefiSideEffects: string[];
+	aefiSideEffects: AefiSideEffects[];
 	@IsOptional()
 	@IsNotEmpty()
 	@ApiProperty({ nullable: true, example: 'Pain in abdomen' })
@@ -17,6 +18,10 @@ export class ReportAefiDto {
 	@IsNotEmpty()
 	@ApiProperty({ example: 'bvS3GVQAlj' })
 	aefiSeverityId: string;
+	@IsOptional()
+	@IsNotEmpty()
+	@ApiProperty({ example: 'I2nf2go21' })
+	vaccineCode: string;
 	@IsNotEmpty()
 	@ApiProperty({ example: 'op90Imdoaw' })
 	trackedEntityInstance: string;
@@ -29,4 +34,13 @@ export class ReportAefiDto {
 	@IsNotEmpty()
 	@ApiProperty({ example: '24je045md2' })
 	programStage: string;
+}
+class AefiSideEffects {
+	@IsNotEmpty()
+	@ApiProperty({ example: '390dmi14d' })
+	dataElement: string;
+	@Optional()
+	@IsString()
+	@ApiProperty({ example: '390dmi14d' })
+	value?: string;
 }

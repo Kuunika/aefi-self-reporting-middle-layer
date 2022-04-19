@@ -14,6 +14,7 @@ export class VaccineService {
 		return vaccinesFromOhsp.map((vaccine) => ({
 			categoryOptionId: vaccine.id,
 			vaccineName: vaccine.displayName,
+			vaccineCode: vaccine.code,
 			//TODO: Matching is a little brittle, consider replacing with a regex.
 			numberOfDosages: vaccineDosages.find((dosageInfo) => dosageInfo.name.includes(vaccine.displayName) && dosageInfo.numberOfDoses < 10)
 				?.numberOfDoses,

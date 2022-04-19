@@ -27,6 +27,10 @@ export class ClientsService {
 				program: this.config.get<string>('AEFI_VACCINE_PROGRAM'),
 				programStage: this.config.get<string>('AEFI_VACCINE_STAGE'),
 				trackedEntityInstance: trackedEntityInstance.trackedEntityInstances[0].trackedEntityInstance,
+				//TODO: What do we do when demographics are not present
+				firstName: trackedEntityInstance.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'First Name')
+					.value,
+				surname: trackedEntityInstance.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'Last Name').value,
 			};
 		}
 		//TODO: Find out how to do this in the controller
@@ -91,6 +95,8 @@ export class ClientsService {
 				trackedEntityInstance: result.response.importSummaries[0].reference,
 				program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
 				programStage: this.config.get<string>('AEFI_SELF_REGISTRATION_STAGE'),
+				firstName: payload.firstName,
+				surname: payload.surname,
 			};
 		} catch (err) {}
 	}
