@@ -29,5 +29,5 @@ export class ClientDto {
 	})
 	lastVaccinationDate?: string;
 	@ApiProperty({ example: 'astrazeneca' })
-	vaccineType?: string;
+	vaccineCode?: string;
 }
