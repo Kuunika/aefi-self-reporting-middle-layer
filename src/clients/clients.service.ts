@@ -27,6 +27,7 @@ export class ClientsService {
 				program: this.config.get<string>('AEFI_VACCINE_PROGRAM'),
 				programStage: this.config.get<string>('AEFI_VACCINE_STAGE'),
 				trackedEntityInstance: trackedEntityInstance.trackedEntityInstances[0].trackedEntityInstance,
+				orgUnit: trackedEntityInstance.trackedEntityInstances[0].orgUnit,
 				//TODO: What do we do when demographics are not present
 				firstName: trackedEntityInstance.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'First Name')
 					.value,

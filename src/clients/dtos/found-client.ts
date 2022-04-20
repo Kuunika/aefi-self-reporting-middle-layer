@@ -20,4 +20,9 @@ export class ClientDto {
 		example: 'Doe',
 	})
 	surname: string;
+
+	@ApiProperty({
+		example: 'd03no03dz',
+	})
+	orgUnit?: string;
 }
