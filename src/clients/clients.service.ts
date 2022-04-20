@@ -32,6 +32,8 @@ export class ClientsService {
 					trackedEntityInstance: trackedEntityInstance.trackedEntityInstances[0].trackedEntityInstance,
 					orgUnit: event.orgUnit,
 					lastVaccinationDate: moment(event.eventDate).format('YYYY-MM-DD'),
+					vaccineType: event.dataValues.find((dataValue) => dataValue.dataElement === this.config.get<string>('AEFI_VACCINATION_TYPE'))
+						.value,
 					//TODO: What do we do when demographics are not present
 					firstName: trackedEntityInstance.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'First Name')
 						.value,
@@ -55,7 +57,7 @@ export class ClientsService {
 			}, [])
 			//TODO: find better names
 			.reduce((lastRecordedEvent, current) => {
-				if (new Date(current.eventDate) >= new Date(lastRecordedEvent.eventDate)) {
+				if (new Date(current.eventDate) >= new Date(lastRecordedEvent.eventDate) && current.deleted === false) {
 					return current;
 				}
 
