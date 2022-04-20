@@ -20,9 +20,12 @@ export class ClientDto {
 		example: 'Doe',
 	})
 	surname: string;
-
 	@ApiProperty({
 		example: 'd03no03dz',
 	})
 	orgUnit?: string;
+	@ApiProperty({
+		example: '2022-09-28',
+	})
+	lastVaccinationDate?: string;
 }

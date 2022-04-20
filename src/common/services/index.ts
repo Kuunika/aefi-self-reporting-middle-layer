@@ -1,1 +1,1 @@
-export { LoggingService } from './logging/logging.service';
+export * from './logging/logging.module';

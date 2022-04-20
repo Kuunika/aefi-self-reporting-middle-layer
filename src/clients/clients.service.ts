@@ -2,17 +2,18 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Dhis2EnrolmentAndEvent } from '../common/types/dhis2-enrolment-and-event';
 import { CreateClientDto } from '../common/dtos/aefi-preregistry.dto';
-import { Dhis2NewTrackedEntityInstance, IDhis2TrackedEntityInstance } from '../common/types';
+import { Dhis2NewTrackedEntityInstance, Event, IDhis2TrackedEntityInstance, TrackedEntityInstance } from '../common/types';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { CLIENT_NOT_FOUND_ERROR_MESSAGE } from './constants/error-messages';
 import { ClientDto } from './dtos/found-client';
 //import { ClientNotFoundException } from './exceptions/client-not-found.exception';
 import { FindClientQueryString } from './query-strings/find-client';
 import * as moment from 'moment';
+import { LoggingService } from 'src/common/services/logging/logging.service';
 
 @Injectable()
 export class ClientsService {
-	constructor(private readonly ohspClient: OhspClientService, private readonly config: ConfigService) {}
+	constructor(private readonly ohspClient: OhspClientService, private readonly config: ConfigService, private readonly logger: LoggingService) {}
 	async find({ epi_number, phone_number }: FindClientQueryString): Promise<ClientDto> {
 		let trackedEntityInstance: IDhis2TrackedEntityInstance;
 		//TODO: find alternative, as more discriminators are added this code will need to change.
@@ -23,19 +24,44 @@ export class ClientsService {
 			trackedEntityInstance = await this.ohspClient.queryTrackedEntityByEpiNumber(epi_number);
 		}
 		if (trackedEntityInstance?.trackedEntityInstances.length) {
-			return {
-				program: this.config.get<string>('AEFI_VACCINE_PROGRAM'),
-				programStage: this.config.get<string>('AEFI_VACCINE_STAGE'),
-				trackedEntityInstance: trackedEntityInstance.trackedEntityInstances[0].trackedEntityInstance,
-				orgUnit: trackedEntityInstance.trackedEntityInstances[0].orgUnit,
-				//TODO: What do we do when demographics are not present
-				firstName: trackedEntityInstance.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'First Name')
-					.value,
-				surname: trackedEntityInstance.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'Last Name').value,
-			};
+			try {
+				const event = this.getLastVaccinationOrgUnit(trackedEntityInstance.trackedEntityInstances[0]);
+				return {
+					program: this.config.get<string>('AEFI_VACCINE_PROGRAM'),
+					programStage: this.config.get<string>('AEFI_VACCINE_STAGE'),
+					trackedEntityInstance: trackedEntityInstance.trackedEntityInstances[0].trackedEntityInstance,
+					orgUnit: event.orgUnit,
+					lastVaccinationDate: moment(event.eventDate).format('YYYY-MM-DD'),
+					//TODO: What do we do when demographics are not present
+					firstName: trackedEntityInstance.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'First Name')
+						.value,
+					surname: trackedEntityInstance.trackedEntityInstances[0].attributes.find((attribute) => attribute.displayName === 'Last Name')
+						.value,
+				};
+			} catch (error) {
+				this.logger.error(`No events found for the given Record: ${epi_number}:${phone_number}`);
+			}
 		}
 		//TODO: Find out how to do this in the controller
 		throw new NotFoundException(CLIENT_NOT_FOUND_ERROR_MESSAGE);
+	}
+
+	getLastVaccinationOrgUnit(trackedEntityInstance: TrackedEntityInstance) {
+		//TODO: Add fallback when events do not exist
+		//TODO: The double reduce is very inefficient
+		const event = trackedEntityInstance.enrollments
+			.reduce((acc: Event[], enrollment) => {
+				return [...acc, ...enrollment.events.filter((event) => event.program === this.config.get<string>('AEFI_VACCINE_PROGRAM'))];
+			}, [])
+			//TODO: find better names
+			.reduce((lastRecordedEvent, current) => {
+				if (new Date(current.eventDate) >= new Date(lastRecordedEvent.eventDate)) {
+					return current;
+				}
+
+				return lastRecordedEvent;
+			});
+		return event;
 	}
 
 	async create(payload: CreateClientDto): Promise<ClientDto> {
