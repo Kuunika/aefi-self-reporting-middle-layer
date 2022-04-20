@@ -7,7 +7,9 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	const config = app.get<ConfigService>(ConfigService);
 	const port = config.get<number>('AEFI_API_PORT') || 3000;
-	app.setGlobalPrefix('api');
+	const ENVIRONMENT = config.get<string>('ENVIRONMENT');
+	const prefix = ENVIRONMENT === 'SQA' ? 'aefi/api' : 'api';
+	app.setGlobalPrefix(prefix);
 	const documentConfig = new DocumentBuilder()
 		.setTitle('AEFI API')
 		.setDescription('AEFI Reporting API for WhatsApp Chatbot')
