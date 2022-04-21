@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { DataElement, Dhis2DataElement } from '../common/types';
 import { AefiSignsSymptomsDto } from './dtos/aefi-signs-symptoms';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
@@ -8,6 +8,7 @@ import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dt
 import * as moment from 'moment';
 import { DHIS2Status } from 'src/ohsp/enums/status';
 import { LoggingService } from 'src/common/services/logging/logging.service';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class AefiService {
@@ -15,20 +16,30 @@ export class AefiService {
 		private readonly configService: ConfigService,
 		private readonly ohspClient: OhspClientService,
 		private readonly log: LoggingService,
+		@Inject(CACHE_MANAGER) private cacheManager: Cache,
 	) {}
 
 	async getAllAefiSignsAndSymptoms(): Promise<AefiSignsSymptomsDto> {
-		const SIGN_AND_SYMPTOMS = this.configService.get<string>('SIGN_AND_SYMPTOMS_URL');
+		const fromCache = await this.cacheManager.get<AefiSignsSymptomsDto>('aefiSignsAndSymptoms');
+		if (fromCache) {
+			return fromCache;
+		}
+
+		const SIGN_AND_SYMPTOMS_URL = this.configService.get<string>('SIGN_AND_SYMPTOMS_URL');
 		const AEFI_SEVERITY_OPTION_SET = this.configService.get<string>('AEFI_SEVERITY_OPTION_SET');
-		const signAndSymptomsDataElements: Dhis2DataElement = await this.ohspClient.getDhis2Resource<Dhis2DataElement>(SIGN_AND_SYMPTOMS);
+		const signAndSymptomsDataElements: Dhis2DataElement = await this.ohspClient.getDhis2Resource<Dhis2DataElement>(SIGN_AND_SYMPTOMS_URL);
 		const severityOptionSetValues = await this.ohspClient.getOptionsSetValues(AEFI_SEVERITY_OPTION_SET);
 		const severityOptions = await Promise.all(severityOptionSetValues.options.map((option) => this.ohspClient.getOption(option.id)));
 
 		const formatDataElementToDto = (de: DataElement) => ({ name: de.displayName.split(' ').at(-1), dataElementId: de.id });
-		return {
+		const aefiSignsAndSymptoms = {
 			aefiSymptoms: signAndSymptomsDataElements.dataElements.map(formatDataElementToDto),
 			aefiSeverity: severityOptions.map((option) => ({ name: option.displayName, dataElementId: option.code })),
 		};
+
+		await this.cacheManager.set('aefiSignsAndSymptoms', aefiSignsAndSymptoms, { ttl: 40_000 });
+
+		return aefiSignsAndSymptoms;
 	}
 
 	async report({
