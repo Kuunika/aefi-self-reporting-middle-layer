@@ -1,14 +1,11 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
-import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
 import { ConfigService } from '@nestjs/config';
 import { IDhis2TrackedEntityInstance, TrackedEntityInstance, Event as Dhis2Event } from '../common/types/dhis2-tracked-entity-instance';
-import { CreateNewDhis2EventDto, DataValue } from '../common/dtos/create-new-dhis2-event.dto';
-import moment from 'moment';
+import { DataValue } from '../common/dtos/create-new-dhis2-event.dto';
 import { VaccineService } from 'src/vaccine/vaccine.service';
 import { VaccineTypeDto } from 'src/common/dtos/vaccine-type.dto';
-import { DHIS2Status } from 'src/ohsp/enums/status';
 
 export enum QUERY_DISCRIMINATOR {
 	PHONE_NUMBER,
