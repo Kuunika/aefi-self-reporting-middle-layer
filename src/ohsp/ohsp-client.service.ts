@@ -43,7 +43,7 @@ export class OhspClientService {
 	}
 
 	async getAllVaccines() {
-		const AEFI_VACCINE_DHIS_OPTIONS = this.configService.get('AEFI_VACCINE_DHIS_OPTIONS');
+		const AEFI_VACCINE_DHIS_OPTIONS = this.configService.get('AEFI_VACCINE_OPTIONS_SET');
 		const request = this.httpService.get<Dhis2OptionSet>(`/optionSets/${AEFI_VACCINE_DHIS_OPTIONS}.json`);
 		const response = await lastValueFrom(request);
 		const vaccineIds = response.data.options;
