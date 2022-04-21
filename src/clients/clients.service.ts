@@ -84,7 +84,7 @@ export class ClientsService {
 				},
 				{
 					attribute: this.config.get<string>('ENROLMENT_DOB'),
-					value: payload.dob,
+					value: moment(payload.dob).format('YYYY-MM-DD'),
 				},
 				{
 					attribute: this.config.get<string>('ENROLMENT_PHONE_NUMBER'),
@@ -107,7 +107,7 @@ export class ClientsService {
 			enrollments: [
 				{
 					enrolmentDate: moment().format('YYYY-MM-DD'),
-					incidentDate: payload.incidentDate,
+					incidentDate: moment(payload.incidentDate).format('YYYY-MM-DD'),
 					orgUnit: payload.orgUnit,
 					program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
 				},
@@ -115,18 +115,17 @@ export class ClientsService {
 			orgUnit: payload.orgUnit,
 			trackedEntityType: ENROLMENT_TRACKED_ENTITY_TYPE,
 		};
-		try {
-			const result = await this.ohspClient.createDhis2Resource<Dhis2EnrolmentAndEvent, Dhis2NewTrackedEntityInstance>(
-				'/trackedEntityInstances',
-				enrolmentAndEventPayload,
-			);
-			return {
-				trackedEntityInstance: result.response.importSummaries[0].reference,
-				program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
-				programStage: this.config.get<string>('AEFI_SELF_REGISTRATION_STAGE'),
-				firstName: payload.firstName,
-				surname: payload.surname,
-			};
-		} catch (err) {}
+
+		const result = await this.ohspClient.createDhis2Resource<Dhis2EnrolmentAndEvent, Dhis2NewTrackedEntityInstance>(
+			'/trackedEntityInstances',
+			enrolmentAndEventPayload,
+		);
+		return {
+			trackedEntityInstance: result.response.importSummaries[0].reference,
+			program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
+			programStage: this.config.get<string>('AEFI_SELF_REGISTRATION_STAGE'),
+			firstName: payload.firstName,
+			surname: payload.surname,
+		};
 	}
 }

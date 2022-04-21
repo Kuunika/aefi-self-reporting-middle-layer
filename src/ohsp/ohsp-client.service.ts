@@ -1,14 +1,14 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
-import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
-import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
-import { Dhis2Option, Dhis2OptionSet, OrgUnit, IDhis2TrackedEntityInstance, Dhis2DataElement } from '../common/types';
-import * as moment from 'moment';
+import { Dhis2Option, Dhis2OptionSet, OrgUnit, IDhis2TrackedEntityInstance } from '../common/types';
+import { AxiosError } from 'axios';
+import { Dhis2Error } from 'src/common/types/dhis2-error';
+import { LoggingService } from 'src/common/services/logging/logging.service';
 @Injectable()
 export class OhspClientService {
-	constructor(private readonly httpService: HttpService, private readonly configService: ConfigService) {}
+	constructor(private readonly httpService: HttpService, private readonly configService: ConfigService, private readonly log: LoggingService) {}
 
 	//TODO: Duplication and Ugly, Please Change
 	async queryTrackedEntityByPhoneNumber(phoneNumber: string) {
@@ -32,7 +32,6 @@ export class OhspClientService {
 			`/trackedEntityInstances.json?ou=${AEFI_VACCINES_OU}&ouMode=${AEFI_VACCINES_OU_MODE}&filter=${AEFI_EPI_NUMBER_FILTER}:EQ:${epiNumber}&fields=enrollments[events],attributes,orgUnit,trackedEntityInstance`,
 		);
 		const response = await lastValueFrom(request);
-		console.log(response.data);
 
 		return response.data;
 	}
@@ -84,7 +83,14 @@ export class OhspClientService {
 			const response = await lastValueFrom(request);
 			return response.data;
 		} catch (err) {
-			throw new ServiceUnavailableException();
+			const Error = err as AxiosError;
+			const dhis2Error = Error.response.data as Dhis2Error;
+
+			if (dhis2Error.httpStatusCode === 409) {
+				const conflicts = dhis2Error.response.importSummaries[0].conflicts.reduce((acc: string, cur) => `${acc} ${cur.value}`, '');
+				this.log.error(`${new Date()}: Conflicts when Trying to Create Record in OHSP - ${conflicts}`);
+			}
+			throw new InternalServerErrorException();
 		}
 	}
 }
