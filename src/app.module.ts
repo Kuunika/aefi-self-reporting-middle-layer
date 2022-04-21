@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EvaccineRegistryModule } from './evaccine-registry/evaccine-registry.module';
 import { AefiModule } from './aefi/aefi.module';
@@ -20,6 +20,7 @@ import { AppService } from './app.service';
 		OrganisationalUnitModule,
 		DistrictModule,
 		ClientsModule,
+		CacheModule.register({ isGlobal: true }),
 	],
 	controllers: [AppController],
 	providers: [AppService],

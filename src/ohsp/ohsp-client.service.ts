@@ -76,14 +76,28 @@ export class OhspClientService {
 		}
 	}
 
+	async findDhis2Resource<Return>(url): Promise<Return> {
+		try {
+			const request = await this.httpService.get<Return>(url);
+			const response = await lastValueFrom(request);
+			return response.data;
+		} catch (err) {
+			const error = err as AxiosError;
+			if (error.response.status === 404) {
+				this.log.error(`Resource Not Found URL: ${url}`);
+			}
+			throw new InternalServerErrorException();
+		}
+	}
+
 	async createDhis2Resource<Payload, Return>(url: string, payload: Payload): Promise<Return> {
 		try {
 			const request = await this.httpService.post<Return>(url, payload);
 			const response = await lastValueFrom(request);
 			return response.data;
 		} catch (err) {
-			const Error = err as AxiosError;
-			const dhis2Error = Error.response.data as Dhis2Error;
+			const error = err as AxiosError;
+			const dhis2Error = error.response.data as Dhis2Error;
 
 			if (dhis2Error.httpStatusCode === 409) {
 				const description = dhis2Error.response.importSummaries[0].description;
