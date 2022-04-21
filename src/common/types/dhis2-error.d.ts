@@ -11,6 +11,7 @@ export interface ImportSummary {
 	status: string;
 	importOptions: ImportOptions;
 	importCount: ImportCount;
+	description: string;
 	conflicts: Conflict[];
 	enrollments: Response;
 }
