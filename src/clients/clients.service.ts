@@ -103,12 +103,11 @@ export class ClientsService {
 					value: payload.physicalAddress,
 				},
 			],
-			//TODO: See how you can validate this object
 			enrollments: [
 				{
-					enrollmentDate: moment().format('YYYY-MM-DD'),
+					enrollmentDate: moment(payload.incidentDate).format('YYYY-MM-DD'),
 					incidentDate: moment(payload.incidentDate).format('YYYY-MM-DD'),
-					orgUnit: payload.orgUnit,
+					orgUnit: this.config.get<string>('ENROLLMENT_FACILITY'),
 					program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
 				},
 			],
