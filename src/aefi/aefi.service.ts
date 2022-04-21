@@ -1,4 +1,4 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DataElement, Dhis2DataElement } from '../common/types';
 import { AefiSignsSymptomsDto } from './dtos/aefi-signs-symptoms';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
@@ -7,10 +7,15 @@ import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
 import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
 import * as moment from 'moment';
 import { DHIS2Status } from 'src/ohsp/enums/status';
+import { LoggingService } from 'src/common/services/logging/logging.service';
 
 @Injectable()
 export class AefiService {
-	constructor(private readonly configService: ConfigService, private readonly ohspClient: OhspClientService) {}
+	constructor(
+		private readonly configService: ConfigService,
+		private readonly ohspClient: OhspClientService,
+		private readonly log: LoggingService,
+	) {}
 
 	async getAllAefiSignsAndSymptoms(): Promise<AefiSignsSymptomsDto> {
 		const SIGN_AND_SYMPTOMS = this.configService.get<string>('SIGN_AND_SYMPTOMS_URL');
@@ -65,6 +70,7 @@ export class AefiService {
 			],
 		};
 		await this.ohspClient.createDhis2Resource('/events', payload);
+		this.log.info(`${new Date()}: AEFI Created For ${trackedEntityInstance}`);
 		return {
 			message: 'AEFIs successfully reported',
 		};
