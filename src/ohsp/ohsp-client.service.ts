@@ -77,7 +77,6 @@ export class OhspClientService {
 	}
 
 	async createDhis2Resource<Payload, Return>(url: string, payload: Payload): Promise<Return> {
-		//TODO: provide the error report summery in the debug
 		try {
 			const request = await this.httpService.post<Return>(url, payload);
 			const response = await lastValueFrom(request);
@@ -87,8 +86,9 @@ export class OhspClientService {
 			const dhis2Error = Error.response.data as Dhis2Error;
 
 			if (dhis2Error.httpStatusCode === 409) {
+				const description = dhis2Error.response.importSummaries[0].description;
 				const conflicts = dhis2Error.response.importSummaries[0].conflicts.reduce((acc: string, cur) => `${acc} ${cur.value}`, '');
-				this.log.error(`${new Date()}: Conflicts when Trying to Create Record in OHSP - ${conflicts}`);
+				this.log.error(`${new Date()}: Conflicts when Trying to Create Record in OHSP - ${description} ${conflicts}`);
 			}
 			throw new InternalServerErrorException();
 		}
