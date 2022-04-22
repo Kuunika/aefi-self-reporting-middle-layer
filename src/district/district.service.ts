@@ -19,7 +19,7 @@ export class DistrictService {
 			return fromCache;
 		}
 		const DISTRICTS_OPTION_SET_ID = this.config.get<string>('DISTRICTS_OPTION_SET_ID');
-		const optionSet = await this.ohspClient.getDhis2Resource<Dhis2OptionSet>(`/optionSets/${DISTRICTS_OPTION_SET_ID}.json`);
+		const optionSet = await this.ohspClient.findDhis2Resource<Dhis2OptionSet>(`/optionSets/${DISTRICTS_OPTION_SET_ID}.json`);
 		const options = optionSet.options.map((option) => this.ohspClient.getDhis2Resource<Dhis2Option>(`/options/${option.id}.json`));
 		const districts = { districts: (await Promise.all(options)).map((option) => option.code) };
 

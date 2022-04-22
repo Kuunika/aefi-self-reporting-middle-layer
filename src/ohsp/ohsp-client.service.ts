@@ -83,8 +83,14 @@ export class OhspClientService {
 			return response.data;
 		} catch (err) {
 			const error = err as AxiosError;
+			if (error.response.status === 400 || error.response.status === 409) {
+				this.log.error(`There is an issue with the URL: ${error.config.baseURL}/${url}`);
+			}
 			if (error.response.status === 404) {
 				this.log.error(`Resource Not Found URL: ${url}`);
+			}
+			if (error.response.status >= 500) {
+				this.log.error(`OHSP is unavailable`);
 			}
 			throw new InternalServerErrorException();
 		}
