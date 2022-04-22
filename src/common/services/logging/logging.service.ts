@@ -32,7 +32,7 @@ export class LoggingService {
 	private fileTransport(logType: string): DailyRotateFile {
 		return new DailyRotateFile({
 			filename: `aefi-%DATE%.${logType}.log`,
-			dirname: join(__dirname, '..', '..', '..', '..', 'logs'),
+			dirname: join(__dirname, '..', '..', '..', 'logs'),
 			datePattern: 'YYYY-MM-DD',
 			maxSize: '20m',
 		});
