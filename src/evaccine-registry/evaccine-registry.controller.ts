@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, UseInterceptors } from '@nestjs/common';
 import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
 import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
-import { TrackedEntityInstanceNotFoundException } from '../common/exceptions/trackedEntityInstanceNotFound.exception';
 import { ValidatePhoneNumberPipe } from '../common/pipes/phoneNumber/validate-phone-number.pipe';
 import { ValidatePatientSideEffectRecordPipe } from '../common/pipes';
 import { EvaccineRegistryService, QUERY_DISCRIMINATOR } from './evaccine-registry.service';
@@ -28,7 +27,7 @@ export class EvaccineRegistryController {
 		if (trackedEntityInstance) {
 			return trackedEntityInstance;
 		}
-		throw new TrackedEntityInstanceNotFoundException();
+		throw new NotFoundException();
 	}
 
 	@Get('/epi-number/:epiNumber')
@@ -40,7 +39,7 @@ export class EvaccineRegistryController {
 		if (trackedEntityInstance) {
 			return trackedEntityInstance;
 		}
-		throw new TrackedEntityInstanceNotFoundException();
+		throw new NotFoundException();
 	}
 
 	@Post()
