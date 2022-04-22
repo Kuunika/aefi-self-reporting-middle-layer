@@ -6,7 +6,6 @@ import { Dhis2NewTrackedEntityInstance, Event, IDhis2TrackedEntityInstance, Trac
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { CLIENT_NOT_FOUND_ERROR_MESSAGE } from './constants/error-messages';
 import { ClientDto } from './dtos/found-client';
-//import { ClientNotFoundException } from './exceptions/client-not-found.exception';
 import { FindClientQueryString } from './query-strings/find-client';
 import * as moment from 'moment';
 import { LoggingService } from 'src/common/services/logging/logging.service';
