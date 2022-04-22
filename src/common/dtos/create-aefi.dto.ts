@@ -8,8 +8,8 @@ export class ReportAefiDto {
 	@ApiProperty({ example: ['exAlKwep7t'] })
 	aefiSideEffects: AefiSideEffects[];
 	@IsOptional()
-	@IsNotEmpty()
 	@ApiProperty({ nullable: true, example: 'Pain in abdomen' })
+	//TODO: This causes a problem when an empty string is passed, Fix by having the default be 'N/A'
 	aefiOtherSideEffects?: string;
 	@IsNotEmpty()
 	@ApiProperty({ example: 'High Blood Pressure' })
