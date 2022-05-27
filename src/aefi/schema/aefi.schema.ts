@@ -5,7 +5,10 @@ export type ReportedAefiDocument = ReportedAefi & Document;
 @Schema()
 export class ReportedAefi {
 	@Prop({
+		type: String,
 		unique: true,
+		sparse: true,
+		default: null,
 	})
 	transactionId?: string;
 	@Prop()
