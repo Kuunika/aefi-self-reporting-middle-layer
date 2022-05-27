@@ -4,11 +4,12 @@ import { AefiSignsSymptomsDto } from './dtos/aefi-signs-symptoms';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { ConfigService } from '@nestjs/config';
 import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
-import { CreateNewDhis2EventDto } from '../common/dtos/create-new-dhis2-event.dto';
-import * as moment from 'moment';
-import { DHIS2Status } from 'src/ohsp/enums/status';
 import { LoggingService } from 'src/common/services/logging/logging.service';
 import { Cache } from 'cache-manager';
+import { Model } from 'mongoose';
+import { ReportedAefi, ReportedAefiDocument } from './schema/aefi.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { DuplicateTransactionIdError } from './exceptions/duplicate-transaction-id';
 
 @Injectable()
 export class AefiService {
@@ -17,6 +18,7 @@ export class AefiService {
 		private readonly ohspClient: OhspClientService,
 		private readonly log: LoggingService,
 		@Inject(CACHE_MANAGER) private cacheManager: Cache,
+		@InjectModel(ReportedAefi.name) private readonly reportedAefiModel: Model<ReportedAefiDocument>,
 	) {}
 
 	async getAllAefiSignsAndSymptoms(): Promise<AefiSignsSymptomsDto> {
@@ -48,40 +50,32 @@ export class AefiService {
 		aefiSeverityId,
 		aefiSideEffects,
 		trackedEntityInstance,
+		transactionId,
 		orgUnit,
 		vaccineCode,
 		medicalHistory,
 		aefiOtherSideEffects,
 		vaccinationDate,
 	}: ReportAefiDto) {
-		const AEFI_SEVERITY = this.configService.get<string>('AEFI_SEVERITY');
-		//TODO: find more appropriate name
-		const AEFI_VACCINE_DHIS_OPTIONS = this.configService.get<string>('AEFI_VACCINE_DHIS_OPTIONS');
-		const AEFI_MEDICAL_HISTORY = this.configService.get<string>('AEFI_MEDICAL_HISTORY');
-		const AEFI_OTHER_SPECIFY = this.configService.get<string>('AEFI_OTHER_SPECIFY');
-		const AEFI_VACCINATION_DATE = this.configService.get<string>('AEFI_VACCINATION_DATE');
-		const payload: CreateNewDhis2EventDto = {
-			program,
-			programStage,
-			trackedEntityInstance,
-			orgUnit,
-			eventDate: moment().format('YYYY-MM-DD'),
-			status: DHIS2Status.COMPLETED,
-			completedDate: moment().format('YYYY-MM-DD'),
-			dataValues: [
-				{ dataElement: AEFI_VACCINE_DHIS_OPTIONS, value: vaccineCode },
-				{ dataElement: AEFI_MEDICAL_HISTORY, value: medicalHistory },
-				{ dataElement: AEFI_OTHER_SPECIFY, value: aefiOtherSideEffects },
-				{ dataElement: AEFI_VACCINATION_DATE, value: moment(vaccinationDate).format('YYYY-MM-DD') },
-				...aefiSideEffects.map((aefiSideEffect) => ({
-					dataElement: aefiSideEffect.dataElement,
-					value: aefiSideEffect?.value ? aefiSideEffect.value : 'True',
-				})),
-				...(aefiSeverityId ? [{ dataElement: AEFI_SEVERITY, value: aefiSeverityId }] : []),
-			],
-		};
-		await this.ohspClient.createDhis2Resource('/events', payload);
-		this.log.info(`${new Date()}: AEFI Created For ${trackedEntityInstance}`);
+		const reportedAefi = new this.reportedAefiModel();
+		reportedAefi.program = program;
+		reportedAefi.programStage = programStage;
+		reportedAefi.aefiSeverityId = aefiSeverityId;
+		reportedAefi.aefiSideEffects = aefiSideEffects;
+		reportedAefi.aefiOtherSideEffects = aefiOtherSideEffects;
+		reportedAefi.trackedEntityInstance = trackedEntityInstance;
+		reportedAefi.transactionId = transactionId;
+		reportedAefi.orgUnit = orgUnit;
+		reportedAefi.vaccinationDate = vaccinationDate;
+		reportedAefi.vaccineCode = vaccineCode;
+		reportedAefi.medicalHistory = medicalHistory;
+		try {
+			await reportedAefi.save();
+		} catch (error) {
+			this.log.error(`Error saving aefi report: ${error}`);
+			throw new DuplicateTransactionIdError(transactionId);
+		}
+
 		return {
 			message: 'AEFIs successfully reported',
 		};

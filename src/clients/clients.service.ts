@@ -1,18 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Dhis2EnrolmentAndEvent } from '../common/types/dhis2-enrolment-and-event';
 import { CreateClientDto } from '../common/dtos/aefi-preregistry.dto';
-import { Dhis2NewTrackedEntityInstance, Event, IDhis2TrackedEntityInstance, TrackedEntityInstance } from '../common/types';
+import { Event, IDhis2TrackedEntityInstance, TrackedEntityInstance } from '../common/types';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
 import { CLIENT_NOT_FOUND_ERROR_MESSAGE } from './constants/error-messages';
-import { ClientDto } from './dtos/found-client';
 import { FindClientQueryString } from './query-strings/find-client';
 import * as moment from 'moment';
 import { LoggingService } from 'src/common/services/logging/logging.service';
+import { Model, Types } from 'mongoose';
+import { Client, ClientDocument } from './schema/client.schema';
+import { ClientDto } from './dtos';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class ClientsService {
-	constructor(private readonly ohspClient: OhspClientService, private readonly config: ConfigService, private readonly logger: LoggingService) {}
+	constructor(
+		private readonly ohspClient: OhspClientService,
+		private readonly config: ConfigService,
+		private readonly logger: LoggingService,
+		@InjectModel(Client.name) private readonly clientModel: Model<ClientDocument>,
+	) {}
 	async find({ epi_number, phone_number }: FindClientQueryString): Promise<ClientDto> {
 		let trackedEntityInstance: IDhis2TrackedEntityInstance;
 		//TODO: find alternative, as more discriminators are added this code will need to change.
@@ -66,60 +73,28 @@ export class ClientsService {
 	}
 
 	async create(payload: CreateClientDto): Promise<ClientDto> {
-		const ENROLMENT_TRACKED_ENTITY_TYPE = this.config.get<string>('ENROLMENT_TRACKED_ENTITY_TYPE');
-		const enrolmentAndEventPayload: Dhis2EnrolmentAndEvent = {
-			attributes: [
-				{
-					attribute: this.config.get<string>('ENROLMENT_FIRST_NAME'),
-					value: payload.firstName,
-				},
-				{
-					attribute: this.config.get<string>('ENROLMENT_SURNAME'),
-					value: payload.surname,
-				},
-				{
-					attribute: this.config.get<string>('ENROLMENT_GENDER'),
-					value: payload.gender,
-				},
-				{
-					attribute: this.config.get<string>('ENROLMENT_DOB'),
-					value: moment(payload.dob).format('YYYY-MM-DD'),
-				},
-				{
-					attribute: this.config.get<string>('ENROLMENT_PHONE_NUMBER'),
-					value: payload.phoneNumber,
-				},
-				{
-					attribute: this.config.get<string>('ENROLMENT_NATION_ID'),
-					value: payload?.nationalID,
-				},
-				{
-					attribute: this.config.get<string>('ENROLMENT_DISTRICT_OF_RESIDENCE'),
-					value: payload.districtOfResidence,
-				},
-				{
-					attribute: this.config.get<string>('ENROLMENT_PHYSICAL_ADDRESS'),
-					value: payload.physicalAddress,
-				},
-			],
-			enrollments: [
-				{
-					enrollmentDate: moment(payload.incidentDate).format('YYYY-MM-DD'),
-					incidentDate: moment(payload.incidentDate).format('YYYY-MM-DD'),
-					orgUnit: this.config.get<string>('ENROLLMENT_FACILITY'),
-					program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
-				},
-			],
-			orgUnit: payload.orgUnit,
-			trackedEntityType: ENROLMENT_TRACKED_ENTITY_TYPE,
-		};
+		const transactionId = new Types.ObjectId().toString();
+		const client = new this.clientModel();
 
-		const result = await this.ohspClient.createDhis2Resource<Dhis2EnrolmentAndEvent, Dhis2NewTrackedEntityInstance>(
-			'/trackedEntityInstances',
-			enrolmentAndEventPayload,
-		);
+		client.transactionId = transactionId;
+		client.program = this.config.get<string>('AEFI_VACCINE_PROGRAM');
+		client.programStage = this.config.get<string>('AEFI_VACCINE_STAGE');
+		client.orgUnit = this.config.get<string>('AEFI_VACCINE_ORG_UNIT');
+		client.firstName = payload.firstName;
+		client.surname = payload.surname;
+		client.phoneNumber = payload.phoneNumber;
+		client.dob = moment(payload.dob).format('YYYY-MM-DD');
+		client.nationalID = payload.nationalID;
+		client.enrollmentDate = moment().format('YYYY-MM-DD');
+		client.trackedEntityType = this.config.get<string>('ENROLMENT_TRACKED_ENTITY_TYPE');
+		client.gender = payload.gender;
+		client.districtOfResidence = payload.districtOfResidence;
+		client.physicalAddress = payload.physicalAddress;
+
+		await client.save();
+
 		return {
-			trackedEntityInstance: result.response.importSummaries[0].reference,
+			transactionId,
 			program: this.config.get<string>('AEFI_SELF_REGISTRATION_PROGRAM'),
 			programStage: this.config.get<string>('AEFI_SELF_REGISTRATION_STAGE'),
 			firstName: payload.firstName,

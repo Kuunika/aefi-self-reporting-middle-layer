@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-export class ClientFoundDto {
+export class CreatedClientDto {
 	@ApiProperty({
 		example: 'd0m3eaq9',
 	})
-	trackedEntityInstance: string;
+	transactionId: string;
 	@ApiProperty({
 		example: 'si3f0a32',
 	})

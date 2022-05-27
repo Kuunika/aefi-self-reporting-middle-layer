@@ -3,6 +3,17 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Optional } from '@nestjs/common';
 
 export class ReportAefiDto {
+	@ApiProperty({
+		example: '628fe08cede7d9a5fa4cd869',
+	})
+	@IsOptional()
+	@IsNotEmpty()
+	transactionId?: string;
+
+	@ApiProperty({ example: 'op90Imdoaw' })
+	@IsOptional()
+	@IsNotEmpty()
+	trackedEntityInstance: string;
 	//TODO: need a way to validate the strings, could use cache to help
 	@ArrayNotEmpty()
 	@ApiProperty({ example: ['exAlKwep7t'] })
@@ -24,9 +35,6 @@ export class ReportAefiDto {
 	@IsNotEmpty()
 	@ApiProperty({ example: '2022-04-13' })
 	vaccinationDate: string;
-	@IsNotEmpty()
-	@ApiProperty({ example: 'op90Imdoaw' })
-	trackedEntityInstance: string;
 	@IsNotEmpty()
 	@ApiProperty({ example: 'o78jf8j29r' })
 	orgUnit: string;
