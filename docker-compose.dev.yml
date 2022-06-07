@@ -1,0 +1,19 @@
+version: '3'
+services:
+  backend:
+    image: kuunika/aefii-self-reporting-middle-layer-api:4.0.0
+    restart: always
+    ports:
+      - '3000:3000'
+    volumes:
+     - ./logs:/usr/src/app/logs
+    env_file:
+      - .env
+    container_name: aefi
+    networks:
+      - openhimv7_openhim
+networks:
+  openhimv7_openhim:
+    external: true
+volumes:
+  mongo_data:
