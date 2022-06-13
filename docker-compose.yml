@@ -1,7 +1,7 @@
 version: '3'
 services:
   backend:
-    image: kuunika/aefii-self-reporting-middle-layer-api:4.0.0
+    image: kuunika/aefii-self-reporting-middle-layer-api:latest
     restart: always
     ports:
       - '3000:3000'

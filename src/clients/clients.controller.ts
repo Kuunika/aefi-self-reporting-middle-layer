@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { MultipleTrackedEntityInstancesFoundException } from 'src/common/exceptions/multiple-tracked-entity-instances-found';
+import { NoTrackedEntityInstanceFound } from 'src/common/exceptions/no-tracked-entity-instance-found';
 import { ClientsService } from './clients.service';
 import { ClientFoundDto, CreateClientDto } from './dtos';
 import { FindClientQueryString } from './query-strings/find-client';
@@ -10,8 +12,18 @@ export class ClientsController {
 
 	@Get()
 	@ApiResponse({ type: ClientFoundDto, status: 200 })
-	find(@Query() query: FindClientQueryString) {
-		return this.clientsService.find(query);
+	async find(@Query() query: FindClientQueryString) {
+		try {
+			const client = await this.clientsService.find(query);
+			return client;
+		} catch (error) {
+			if (error instanceof NoTrackedEntityInstanceFound) {
+				throw new NotFoundException(error.message);
+			}
+			if (error instanceof MultipleTrackedEntityInstancesFoundException) {
+				throw new BadRequestException(error.message);
+			}
+		}
 	}
 
 	@Post()

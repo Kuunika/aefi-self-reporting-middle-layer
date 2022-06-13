@@ -11,6 +11,8 @@ import { Model, Types } from 'mongoose';
 import { Client, ClientDocument } from './schema/client.schema';
 import { ClientDto } from './dtos';
 import { InjectModel } from '@nestjs/mongoose';
+import { MultipleTrackedEntityInstancesFoundException } from 'src/common/exceptions/multiple-tracked-entity-instances-found';
+import { NoTrackedEntityInstanceFound } from 'src/common/exceptions/no-tracked-entity-instance-found';
 
 @Injectable()
 export class ClientsService {
@@ -29,7 +31,7 @@ export class ClientsService {
 		if (epi_number) {
 			trackedEntityInstance = await this.ohspClient.queryTrackedEntityByEpiNumber(epi_number);
 		}
-		if (trackedEntityInstance?.trackedEntityInstances.length) {
+		if (trackedEntityInstance?.trackedEntityInstances.length === 1) {
 			try {
 				const event = this.getLastVaccinationOrgUnit(trackedEntityInstance.trackedEntityInstances[0]);
 				return {
@@ -49,9 +51,11 @@ export class ClientsService {
 			} catch (error) {
 				this.logger.error(`No events found for the given Record: ${epi_number}:${phone_number}`);
 			}
+		} else if (trackedEntityInstance?.trackedEntityInstances.length > 1) {
+			throw new MultipleTrackedEntityInstancesFoundException();
+		} else {
+			throw new NoTrackedEntityInstanceFound();
 		}
-		//TODO: Find out how to do this in the controller
-		throw new NotFoundException(CLIENT_NOT_FOUND_ERROR_MESSAGE);
 	}
 
 	getLastVaccinationOrgUnit(trackedEntityInstance: TrackedEntityInstance) {

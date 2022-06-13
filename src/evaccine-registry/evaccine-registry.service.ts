@@ -6,6 +6,8 @@ import { IDhis2TrackedEntityInstance, TrackedEntityInstance, Event as Dhis2Event
 import { DataValue } from '../common/dtos/create-new-dhis2-event.dto';
 import { VaccineService } from 'src/vaccine/vaccine.service';
 import { VaccineTypeDto } from 'src/common/dtos/vaccine-type.dto';
+import { MultipleTrackedEntityInstancesFoundException } from '../common/exceptions/multiple-tracked-entity-instances-found';
+import { NoTrackedEntityInstanceFound } from '../common/exceptions/no-tracked-entity-instance-found';
 
 export enum QUERY_DISCRIMINATOR {
 	PHONE_NUMBER,
@@ -84,7 +86,7 @@ export class EvaccineRegistryService {
 	}
 
 	private async createTrackedEntityInstanceDto(dhis2TEI: IDhis2TrackedEntityInstance): Promise<TrackedEntityInstanceFoundDto> {
-		if (dhis2TEI.trackedEntityInstances.length) {
+		if (dhis2TEI.trackedEntityInstances.length && dhis2TEI.trackedEntityInstances.length === 1) {
 			const currentTrackedInstance = dhis2TEI.trackedEntityInstances[0];
 			const epiNumber = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'Unique System Identifier (EPI)').value;
 			const firstName = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'First Name').value;
@@ -98,16 +100,20 @@ export class EvaccineRegistryService {
 				trackedEntityInstanceId: currentTrackedInstance.trackedEntityInstance,
 				orgUnitId: currentTrackedInstance.orgUnit,
 			};
+		} else if (dhis2TEI.trackedEntityInstances.length > 1) {
+			throw new MultipleTrackedEntityInstancesFoundException();
+		} else {
+			throw new NoTrackedEntityInstanceFound();
 		}
-		return null;
 	}
 
 	async getTrackedEntityInstance(discriminator: QUERY_DISCRIMINATOR, value: string) {
 		let Dhis2TrackedEntityInstance;
+
 		if (discriminator === QUERY_DISCRIMINATOR.PHONE_NUMBER) {
 			Dhis2TrackedEntityInstance = await this.ohspClient.queryTrackedEntityByPhoneNumber(value);
-
-			return this.createTrackedEntityInstanceDto(Dhis2TrackedEntityInstance);
+			const trackedEntityInstance = this.createTrackedEntityInstanceDto(Dhis2TrackedEntityInstance);
+			return trackedEntityInstance;
 		}
 
 		Dhis2TrackedEntityInstance = await this.ohspClient.queryTrackedEntityByEpiNumber(value);
