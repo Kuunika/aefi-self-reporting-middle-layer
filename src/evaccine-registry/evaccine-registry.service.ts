@@ -39,6 +39,43 @@ export class EvaccineRegistryService {
 		};
 	}
 
+	vaccinationStatus(dhis2TEI: TrackedEntityInstance) {
+		//filter events to get the program that is the vaccination program stage
+		const vaccineProgramStage = this.configService.get<string>('AEFI_VACCINE_PROGRAM_STAGE');
+		const events = dhis2TEI.enrollments[0].events.filter((event) => event.deleted === false && event.programStage === vaccineProgramStage);
+		const dateOfSecondDosage = events
+			.reduce((acc: DataValue[], cur) => {
+				return [...acc, ...cur.dataValues];
+			}, [])
+			.find((value) => value.dataElement === this.configService.get<string>('AEFI_SECOND_VACCINE_DATE'))?.value;
+		const nextDosageMessage = {
+			1: 'Not Fully Vaccinated',
+			2: 'Fully Vaccinated - Please Get a Booster Dose',
+			3: 'Fully Vaccinated with Booster',
+		};
+		const vaccine_enum = {
+			1: 'PARTIAL',
+			2: 'FULLY',
+			3: 'BOOSTER',
+		};
+		//Ugly Hack, just gets the job done for now
+		let numberOfVaccineDosages = 1;
+		if (events.length >= 3) {
+			numberOfVaccineDosages = 3;
+		} else if (events.length <= 1) {
+			numberOfVaccineDosages = 1;
+		} else {
+			numberOfVaccineDosages = 2;
+		}
+
+		return {
+			programId: events[0]?.program,
+			dateOfNextDosage: numberOfVaccineDosages > 1 ? null : dateOfSecondDosage,
+			nextDosageMessage: nextDosageMessage[numberOfVaccineDosages],
+			vaccinationStatus: vaccine_enum[numberOfVaccineDosages],
+		};
+	}
+
 	// filter enrolments where deleted is eq to false
 	// from any of the events get the vaccine name that was used
 	// if number of events are less than their respective vaccination type return second vaccination date
@@ -91,7 +128,7 @@ export class EvaccineRegistryService {
 			const epiNumber = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'Unique System Identifier (EPI)').value;
 			const firstName = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'First Name').value;
 			const lastName = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'Last Name').value;
-			const currentEnrolledEvent = await this.getProgramAndDosageReminder(currentTrackedInstance);
+			const currentEnrolledEvent = this.vaccinationStatus(currentTrackedInstance);
 			return {
 				epiNumber,
 				firstName,
