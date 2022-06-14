@@ -11,11 +11,17 @@ export class OrganisationalUnitService {
 		if (fromCache) {
 			return fromCache;
 		}
-
-		const orgUnits = (await this.ohspClient.findDhis2Resource<OrgUnit>('/organisationUnits.json?&paging=false')).organisationUnits.map((org) => ({
-			displayName: org.displayName,
-			orgUnitId: org.id,
-		}));
+		let orgUnits;
+		try {
+			orgUnits = (
+				await this.ohspClient.findDhis2Resource<OrgUnit>('/organisationUnits.json?paging=false&filter=level:eq:4')
+			).organisationUnits.map((org) => ({
+				displayName: org.displayName,
+				orgUnitId: org.id,
+			}));
+		} catch (error) {
+			console.log(error);
+		}
 
 		await this.cacheManager.set('orgUnits', orgUnits, { ttl: 40_000 });
 		return orgUnits;
