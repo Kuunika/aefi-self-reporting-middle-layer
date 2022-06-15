@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString } from 'class-validator';
-export class CreateClientDto {
+export class NewClientDto {
 	@ApiProperty({ example: 'John' })
 	firstName: string;
 	@ApiProperty({ example: 'Doe' })
@@ -19,8 +19,13 @@ export class CreateClientDto {
 	@ApiProperty({ example: '1408 Elm St. Mandala' })
 	physicalAddress: string;
 	@ApiProperty({ example: '2020-05-16' })
-	@IsDateString()
-	incidentDate: string;
+	enrollmentDate: string;
 	@ApiProperty({ example: 'op9scvEdIJz' })
 	orgUnit: string;
+	@ApiProperty({ example: 'ejasod032fwq' })
+	transactionId: string;
+	@ApiProperty({ example: '8dpjd00ndod' })
+	program: string;
+	@ApiProperty({ example: '3jdi2mduw2r' })
+	programStage: string;
 }

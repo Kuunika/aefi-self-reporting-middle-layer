@@ -16,8 +16,10 @@ export class CreateClientDto {
 	districtOfResidence: string;
 	@ApiProperty({ example: '1408 Elm St. Mandala' })
 	physicalAddress: string;
-	@ApiProperty({ example: '2020-05-16' })
-	incidentDate: string;
 	@ApiProperty({ example: 'op9scvEdIJz' })
 	orgUnit: string;
+	@ApiProperty({ example: 'op9scvEdIJz' })
+	vaccineCode: string;
+	@ApiProperty({ example: '2021-04-10' })
+	incidentDate: string;
 }

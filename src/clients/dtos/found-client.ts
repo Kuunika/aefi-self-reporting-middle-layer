@@ -28,6 +28,4 @@ export class ClientFoundDto {
 		example: '2022-09-28',
 	})
 	lastVaccinationDate?: string;
-	@ApiProperty({ example: 'astrazeneca' })
-	vaccineCode?: string;
 }

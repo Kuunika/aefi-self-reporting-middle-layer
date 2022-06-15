@@ -37,6 +37,8 @@ export class Client {
 	programStage: string;
 	@Prop()
 	trackedEntityType: string;
+	@Prop()
+	vaccineCode: string;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client);

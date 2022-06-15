@@ -2,7 +2,8 @@ import { BadRequestException, Body, Controller, Get, Post } from '@nestjs/common
 import { AefiService } from './aefi.service';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { ReportAefiDto } from '../common/dtos/create-aefi.dto';
-import { CreatedAefiDto, AefiSignsSymptomsDto } from './dtos';
+import { AefiSignsSymptomsDto } from './dtos';
+import { AefiReportedSuccessfullyDto } from './dtos/aefi-reported-successfully.dto';
 
 @Controller('aefis')
 export class AefiController {
@@ -15,9 +16,12 @@ export class AefiController {
 	}
 
 	@Post()
-	@ApiBody({ type: ReportAefiDto, description: 'Creates a new client within the self registration program' })
-	@ApiResponse({ type: CreatedAefiDto, status: 201 })
-	async report(@Body() payload: ReportAefiDto) {
+	@ApiBody({ type: ReportAefiDto, description: 'Creates New Clients AEFIs Report' })
+	@ApiResponse({
+		type: AefiReportedSuccessfullyDto,
+		status: 201,
+	})
+	async report(@Body() payload: ReportAefiDto): Promise<AefiReportedSuccessfullyDto> {
 		try {
 			const response = await this.aefiService.report(payload);
 			return response;

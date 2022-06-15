@@ -53,9 +53,9 @@ export class AefiService {
 		transactionId,
 		orgUnit,
 		vaccineCode,
+		vaccinationDate,
 		medicalHistory,
 		aefiOtherSideEffects,
-		vaccinationDate,
 	}: ReportAefiDto) {
 		const reportedAefi = new this.reportedAefiModel();
 		reportedAefi.program = program;
@@ -66,9 +66,9 @@ export class AefiService {
 		reportedAefi.trackedEntityInstance = trackedEntityInstance;
 		reportedAefi.transactionId = transactionId;
 		reportedAefi.orgUnit = orgUnit;
-		reportedAefi.vaccinationDate = vaccinationDate;
-		reportedAefi.vaccineCode = vaccineCode;
 		reportedAefi.medicalHistory = medicalHistory;
+		reportedAefi.vaccineCode = vaccineCode;
+		reportedAefi.vaccinationDate = vaccinationDate;
 		try {
 			await reportedAefi.save();
 		} catch (error) {

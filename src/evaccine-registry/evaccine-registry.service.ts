@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OhspClientService } from '../ohsp/ohsp-client.service';
-import { TrackedEntityInstanceFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
+import { ClientFoundDto } from '../common/dtos/trackedEntityInstanceFound.dto';
 import { ConfigService } from '@nestjs/config';
 import { IDhis2TrackedEntityInstance, TrackedEntityInstance, Event as Dhis2Event } from '../common/types/dhis2-tracked-entity-instance';
 import { DataValue } from '../common/dtos/create-new-dhis2-event.dto';
@@ -21,23 +21,6 @@ export class EvaccineRegistryService {
 		private readonly configService: ConfigService,
 		private readonly vaccineService: VaccineService,
 	) {}
-
-	private async getCurrentEnrolledEvent(dhis2TEI: TrackedEntityInstance) {
-		const AEFI_SECOND_VACCINE_DATE = this.configService.get<string>('AEFI_SECOND_VACCINE_DATE');
-
-		// Loops through russian doll DHIS2 object to get the desired program stored in the event
-		const enrollments = dhis2TEI.enrollments;
-		// Assumption is there will only be one instance of Events in the enrolments array
-		//TODO: Add error handling in case of no events found on the person.
-		const dhis2Events = enrollments[0].events;
-		const event = this.getProgram(dhis2Events);
-		const vaccines = await this.vaccineService.getAllVaccineTypes();
-		this.getSecondDosageDate(event, vaccines);
-		return {
-			programId: event?.program,
-			dateOfSecondDosage: event?.dataValues?.find((value) => value?.dataElement === AEFI_SECOND_VACCINE_DATE)?.value ?? '',
-		};
-	}
 
 	vaccinationStatus(dhis2TEI: TrackedEntityInstance) {
 		//filter events to get the program that is the vaccination program stage
@@ -76,66 +59,22 @@ export class EvaccineRegistryService {
 		};
 	}
 
-	// filter enrolments where deleted is eq to false
-	// from any of the events get the vaccine name that was used
-	// if number of events are less than their respective vaccination type return second vaccination date
-	// if the number is eq to, return fully 'Fully Vaccinated'.
-
-	private async getProgramAndDosageReminder(dhis2TEI: TrackedEntityInstance) {
-		const AEFI_VACCINE_PROGRAM = this.configService.get<string>('AEFI_VACCINE_PROGRAM');
-		const AEFI_VACCINATION_TYPE = this.configService.get<string>('AEFI_VACCINATION_TYPE');
-		const AEFI_SECOND_VACCINE_DATE = this.configService.get<string>('AEFI_SECOND_VACCINE_DATE');
-
-		const events = dhis2TEI.enrollments[0].events.filter((event) => event.deleted === false);
-		const vaccineName = events
-			.find((event) => event.program === AEFI_VACCINE_PROGRAM)
-			?.dataValues?.find((value) => value.dataElement === AEFI_VACCINATION_TYPE)?.value;
-		const vaccines = await this.vaccineService.getAllVaccineTypes();
-
-		const numberOfVaccineDosages = vaccines.find((vaccine) => vaccine.vaccineName.toLowerCase() === vaccineName).numberOfDosages;
-		const dateOfSecondDosage = events
-			.reduce((acc: DataValue[], cur) => {
-				return [...acc, ...cur.dataValues];
-			}, [])
-			.find((value) => value.dataElement === AEFI_SECOND_VACCINE_DATE)?.value;
-		const isFullyVaccinated = events.length >= numberOfVaccineDosages;
-		return {
-			programId: events[0]?.program,
-			dateOfNextDosage: isFullyVaccinated ? null : dateOfSecondDosage,
-			nextDosageMessage: isFullyVaccinated ? 'Fully Vaccinated' : 'Not Fully Vaccinated',
-		};
-	}
-
-	private getSecondDosageDate(event: Dhis2Event, vaccines: VaccineTypeDto[]) {}
-
-	private getProgram(dhis2Events: Dhis2Event[]): Dhis2Event {
-		const AEFI_VACCINE_PROGRAM = this.configService.get<string>('AEFI_VACCINE_PROGRAM');
-		const AEFI_FIRST_VACCINE = this.configService.get<string>('AEFI_FIRST_VACCINE');
-		const AEFI_SELF_REGISTRATION_PROGRAM = this.configService.get<string>('AEFI_SELF_REGISTRATION_PROGRAM');
-
-		const vaccineRegistry = dhis2Events.find(
-			(event) => event.program === AEFI_VACCINE_PROGRAM && event.dataValues.find((dataValue) => dataValue.value === AEFI_FIRST_VACCINE),
-		);
-
-		const selfRegistry = dhis2Events.find((event) => event.program === AEFI_SELF_REGISTRATION_PROGRAM);
-
-		return vaccineRegistry ? vaccineRegistry : selfRegistry;
-	}
-
-	private async createTrackedEntityInstanceDto(dhis2TEI: IDhis2TrackedEntityInstance): Promise<TrackedEntityInstanceFoundDto> {
+	private async createTrackedEntityInstanceDto(dhis2TEI: IDhis2TrackedEntityInstance): Promise<ClientFoundDto> {
 		if (dhis2TEI.trackedEntityInstances.length && dhis2TEI.trackedEntityInstances.length === 1) {
 			const currentTrackedInstance = dhis2TEI.trackedEntityInstances[0];
 			const epiNumber = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'Unique System Identifier (EPI)').value;
 			const firstName = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'First Name').value;
-			const lastName = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'Last Name').value;
+			const surname = currentTrackedInstance.attributes.find((attribute) => attribute.displayName === 'Last Name').value;
 			const currentEnrolledEvent = this.vaccinationStatus(currentTrackedInstance);
 			return {
 				epiNumber,
 				firstName,
-				lastName,
+				surname,
 				...currentEnrolledEvent,
-				trackedEntityInstanceId: currentTrackedInstance.trackedEntityInstance,
-				orgUnitId: currentTrackedInstance.orgUnit,
+				trackedEntityInstance: currentTrackedInstance.trackedEntityInstance,
+				orgUnit: currentTrackedInstance.orgUnit,
+				program: '',
+				programStage: '',
 			};
 		} else if (dhis2TEI.trackedEntityInstances.length > 1) {
 			throw new MultipleTrackedEntityInstancesFoundException();

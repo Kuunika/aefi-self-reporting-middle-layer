@@ -7,13 +7,10 @@ export class ReportAefiDto {
 		example: '628fe08cede7d9a5fa4cd869',
 	})
 	@IsOptional()
-	@IsNotEmpty()
 	transactionId?: string;
-
 	@ApiProperty({ example: 'op90Imdoaw' })
 	@IsOptional()
-	@IsNotEmpty()
-	trackedEntityInstance: string;
+	trackedEntityInstance?: string;
 	//TODO: need a way to validate the strings, could use cache to help
 	@ArrayNotEmpty()
 	@ApiProperty({ example: ['exAlKwep7t'] })
@@ -30,12 +27,6 @@ export class ReportAefiDto {
 	@ApiProperty({ example: 'bvS3GVQAlj' })
 	aefiSeverityId: string;
 	@IsNotEmpty()
-	@ApiProperty({ example: 'I2nf2go21' })
-	vaccineCode: string;
-	@IsNotEmpty()
-	@ApiProperty({ example: '2022-04-13' })
-	vaccinationDate: string;
-	@IsNotEmpty()
 	@ApiProperty({ example: 'o78jf8j29r' })
 	orgUnit: string;
 	@IsNotEmpty()
@@ -44,6 +35,12 @@ export class ReportAefiDto {
 	@IsNotEmpty()
 	@ApiProperty({ example: '24je045md2' })
 	programStage: string;
+	@IsOptional()
+	@ApiProperty({ example: '24je045md2' })
+	vaccineCode?: string;
+	@IsOptional()
+	@ApiProperty({ example: '24je045md2' })
+	vaccinationDate?: string;
 }
 class AefiSideEffects {
 	@IsNotEmpty()
