@@ -39,6 +39,10 @@ export class Client {
 	trackedEntityType: string;
 	@Prop()
 	vaccineCode: string;
+	@Prop({
+		min: 1,
+	})
+	does_number: number;
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client);

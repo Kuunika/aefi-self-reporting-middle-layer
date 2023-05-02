@@ -15,25 +15,37 @@ export class OhspClientService {
 		const AEFI_VACCINES_OU = this.configService.get('AEFI_VACCINES_OU');
 		const AEFI_VACCINES_OU_MODE = this.configService.get('AEFI_VACCINES_OU_MODE');
 		const AEFI_PHONE_NUMBER = this.configService.get('AEFI_PHONE_NUMBER');
-
-		const request = this.httpService.get<IDhis2TrackedEntityInstance>(
-			`/trackedEntityInstances.json?ou=${AEFI_VACCINES_OU}&ouMode=${AEFI_VACCINES_OU_MODE}&filter=${AEFI_PHONE_NUMBER}:EQ:${phoneNumber}&fields=enrollments[events],attributes,orgUnit,trackedEntityInstance`,
-		);
-		const response = await lastValueFrom(request);
-		return response.data;
+		const AEFI_PROGRAM = this.configService.get('AEFI_PROGRAM');
+		try {
+			const request = this.httpService.get<IDhis2TrackedEntityInstance>(
+				`/trackedEntityInstances.json?program=${AEFI_PROGRAM}&ou=${AEFI_VACCINES_OU}&ouMode=${AEFI_VACCINES_OU_MODE}&filter=${AEFI_PHONE_NUMBER}:EQ:${phoneNumber}&fields=enrollments[events],attributes,orgUnit,trackedEntityInstance`,
+			);
+			const response = await lastValueFrom(request);
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			console.error('Failed to find the Tracked Entity Instance' + error.message);
+			return null;
+		}
 	}
 
 	async queryTrackedEntityByEpiNumber(epiNumber: string) {
 		const AEFI_VACCINES_OU = this.configService.get('AEFI_VACCINES_OU');
 		const AEFI_VACCINES_OU_MODE = this.configService.get('AEFI_VACCINES_OU_MODE');
 		const AEFI_EPI_NUMBER_FILTER = this.configService.get('AEFI_EPI_NUMBER_FILTER');
+		const AEFI_PROGRAM = this.configService.get('AEFI_PROGRAM');
+		try {
+			const request = this.httpService.get<IDhis2TrackedEntityInstance>(
+				`/trackedEntityInstances.json?program=${AEFI_PROGRAM}&ou=${AEFI_VACCINES_OU}&ouMode=${AEFI_VACCINES_OU_MODE}&filter=${AEFI_EPI_NUMBER_FILTER}:EQ:${epiNumber}&fields=enrollments[events],attributes,orgUnit,trackedEntityInstance`,
+			);
+			const response = await lastValueFrom(request);
 
-		const request = this.httpService.get<IDhis2TrackedEntityInstance>(
-			`/trackedEntityInstances.json?ou=${AEFI_VACCINES_OU}&ouMode=${AEFI_VACCINES_OU_MODE}&filter=${AEFI_EPI_NUMBER_FILTER}:EQ:${epiNumber}&fields=enrollments[events],attributes,orgUnit,trackedEntityInstance`,
-		);
-		const response = await lastValueFrom(request);
-
-		return response.data;
+			return response.data;
+		} catch (error) {
+			console.error(error);
+			console.error('Failed to find the Tracked Entity Instance' + error.message);
+			return null;
+		}
 	}
 
 	async getAllOrganisationalUnits() {

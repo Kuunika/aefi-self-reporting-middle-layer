@@ -6,6 +6,7 @@ import { NoTrackedEntityInstanceFound } from 'src/common/exceptions/no-tracked-e
 import { ClientsService } from './clients.service';
 import { ClientFoundDto, CreateClientDto } from './dtos';
 import { FindClientQueryString } from './query-strings/find-client';
+import { log } from 'console';
 
 @Controller('clients')
 export class ClientsController {

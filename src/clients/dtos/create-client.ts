@@ -22,4 +22,6 @@ export class CreateClientDto {
 	vaccineCode: string;
 	@ApiProperty({ example: '2021-04-10' })
 	incidentDate: string;
+	@ApiProperty({ example: '1', nullable: true, minimum: 1 })
+	dose_number?: number;
 }

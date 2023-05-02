@@ -30,7 +30,9 @@ export class ClientsService {
 			trackedEntityInstance = await this.ohspClient.queryTrackedEntityByPhoneNumber(phone_number);
 		}
 		if (epi_number) {
+			console.log('Now Querying by EPI Number');
 			trackedEntityInstance = await this.ohspClient.queryTrackedEntityByEpiNumber(epi_number);
+			console.log('Tracked Entity Found');
 		}
 		if (trackedEntityInstance) {
 			return this.parseIntoTrackedEntityInstanceDto(trackedEntityInstance);
